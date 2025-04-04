@@ -14,7 +14,6 @@ def main():
     dt = 0
 
     while running:
-
         # button event
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
