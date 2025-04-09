@@ -1,14 +1,35 @@
 # dcaclab.com
+import pygame as pg
+
 class Gates:
-    def __init__(self, gateType, gateID):
+    def __init__(self, gateType, gateID, x, y, image):
         self.gate_id = gateID
         self.gate_type = gateType.upper() #AND OR NOT
-        self.inputs = []
-        self.output_val = None
+        #display properties
+        self.x = x
+        self.y = y
+        self.rect = pg.Rect(x,y,80,80)
+        self.dragging = False
+        self.image = image
+
+        #dragging
+        self.offset_x = 0
+        self.offset_y = 0
+
+        #logic processing
+        self.inputs = []  #list of input values (0 or 1)
+        self.output_val = None #cached output after eval
+
+        #determine which part of the picture is being shown (which gate)
+        #0 = AND 1 = OR 2 = NOT
+        self.sprite_index = {"AND": 0, "OR": 1, "NOT": 2}.get(self.gate_type, 0)
+
 
     def set_inputs(self, *inputs):
+        #set input vals for this gate
         self.inputs = inputs
 
+    #evaluate logic gate and output based on it's type
     def eval(self):
         if self.gate_type =="AND":
             return int(all(self.inputs))
@@ -25,3 +46,32 @@ class Gates:
     def output(self):
         self.output_val = self.eval()
         return self.output_val
+
+    def draw(self, surface):
+        #draw the correct part of the sprite sheet onto the screen
+        src_rect = pg.Rect(self.sprite_index * 80, 0, 80, 80)  # Get section of image to show
+        surface.blit(self.image, self.rect, area=src_rect)  # Blit that section at current position
+
+    def handle_event(self, event):
+        #handle mouse events for dragging the gate
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.dragging = True
+                mouse_x, mouse_y = event.pos
+                self.offset_x = self.rect.x - mouse_x
+                self.offset_y = self.rect.y - mouse_y
+
+        elif event.type == pg.MOUSEBUTTONUP:
+            self.dragging = False
+
+        elif event.type == pg.MOUSEMOTION and self.dragging:
+            #while dragging, update position based on mouse movement
+            mouse_x, mouse_y = event.pos
+            self.rect.x = mouse_x + self.offset_x
+            self.rect.y = mouse_y + self.offset_y
+
+    def stop_dragging(self):
+        self.dragging = False
+
+
+
