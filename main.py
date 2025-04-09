@@ -4,6 +4,7 @@ from pygame import mixer
 
 from components.Buttons import Button
 from components.battery import Battery
+from components.wire import Wire
 
 # pygame setup
 
@@ -15,6 +16,11 @@ def main():
     clock = pg.time.Clock()
     running = True
     dt = 0
+
+    # Wire Variables
+    wires = []
+    drawing_wire = False
+    wire_start = None
 
     def PushButton():
         print('button pushed')
@@ -29,6 +35,7 @@ def main():
     rollTime = 0
 
     while running:
+        screen.fill((30,30,30))
         # button event
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -38,6 +45,16 @@ def main():
             ngButton.handle_event(event)
             battery.handle_event(event)
 
+            if event.type == pg.MOUSEBUTTONDOWN:
+                wire_start = pg.mouse.get_pos()
+                drawing_wire = True
+
+            elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
+                wire_end = pg.mouse.get_pos()
+                wires.append(Wire(wire_start, wire_end))
+                print(f"Wire from {wire_start} to {wire_end}")
+                drawing_wire = False
+                wire_start = None
 
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 True
@@ -46,7 +63,19 @@ def main():
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
+
+
+        # Draw wires
+        for wire in wires:
+            wire.draw(screen)
+
+        if drawing_wire and wire_start:
+            current_pos = pg.mouse.get_pos()
+            pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
+
+
         pg.display.flip()
+        clock.tick(60)
 
 if __name__ == "__main__":
     main()
