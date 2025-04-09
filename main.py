@@ -5,6 +5,8 @@ from pygame import mixer
 from components.Buttons import Button
 from components.battery import Battery
 from components.wire import Wire
+from components.gates import Gates
+
 
 # pygame setup
 
@@ -21,6 +23,10 @@ def main():
     wires = []
     drawing_wire = False
     wire_start = None
+
+    #gates image
+    gate_sprite = pg.image.load("images/and or not gates.png").convert_alpha()
+
 
     def PushButton():
         print('button pushed')
