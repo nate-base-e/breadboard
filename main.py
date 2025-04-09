@@ -5,7 +5,6 @@ from pygame import mixer
 from components.Buttons import Button
 from components.battery import Battery
 from components.wire import Wire
-from components.square import Square
 
 # pygame setup
 
@@ -61,15 +60,6 @@ def main():
                 True
                 #STUFF HERE
 
-        #KWALPOLE =============================================================
-        #create squares in list
-
-        #for loop of list to draw squares
-
-
-
-
-        #=======================================================================
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
@@ -82,7 +72,6 @@ def main():
         if drawing_wire and wire_start:
             current_pos = pg.mouse.get_pos()
             pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
-
 
 
         pg.display.flip()
