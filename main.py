@@ -64,6 +64,13 @@ def main():
         ngButton.draw(screen)
         battery.draw(screen)
 
+        #KWALPOLE---------------------------------------------------------
+        #create list of squares 3600
+
+        #for loop of drawing each square in list
+
+        #------------------------------------------------------------------
+
 
         # Draw wires
         for wire in wires:
