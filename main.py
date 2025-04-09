@@ -62,10 +62,12 @@ def main():
                 #STUFF HERE
 
         #KWALPOLE =============================================================
-        # draw squares
+        #create squares in list
 
-        Square.draw(Square, screen, 0, 0)
-        Square.draw(Square, screen, 16, 0)
+        #for loop of list to draw squares
+
+
+
 
         #=======================================================================
         button.draw(screen)

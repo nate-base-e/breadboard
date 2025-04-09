@@ -1,5 +1,5 @@
 #board that other components will be placed on
-#45x80 grid
+#45x80 grid 3600 total squares
 #each square 16px
 import pygame as pg
 
