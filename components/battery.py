@@ -16,12 +16,20 @@ class Battery:
         self.height = height
         self.callback = callback
 
+        self.circle_radius = height // 5  # Radius for the end circles
+        self.circle_color = (200, 200, 200)  # Light gray color for circles
+
+        self.dragging = False
+
     def getVoltage(self):
         return self.voltage
 
     def setVoltage(self, voltage):
         self.voltage = voltage
-        self.text = f"{round(self.voltage, 1)}V"
+        self.text = f"{round(voltage, 1)}V"
+
+    def move(self, pos):
+        self.x, self.y = abs(pos[0] - self.width/2), abs(pos[1] - self.height/2)
 
     def draw(self, screen):
         # Render the text
@@ -29,21 +37,73 @@ class Battery:
         text_x = (self.x + (self.width - text_surface.get_width()) // 2) + 10
         text_y = self.y + (self.height - text_surface.get_height()) // 2
 
+        # Render the image
         image = pygame.image.load('images/Battery.png')
         image = pygame.transform.scale(image, (self.width, self.height))
         screen.blit(image, (self.x, self.y))
         screen.blit(text_surface, (text_x, text_y))
 
+        # Draw left circle (negative terminal)
+        left_circle_x = self.x - self.circle_radius
+        left_circle_y = self.y + self.height // 2
+        pygame.draw.circle(screen, self.circle_color,
+                           (left_circle_x, left_circle_y), self.circle_radius)
+
+        # Draw right circle (positive terminal)
+        right_circle_x = self.x + self.width + self.circle_radius
+        right_circle_y = self.y + self.height // 2
+        pygame.draw.circle(screen, self.circle_color,
+                           (right_circle_x, right_circle_y), self.circle_radius)
+
     def handle_event(self, event):
-        # Check if mouse is hovering over the button
         mouse_pos = pygame.mouse.get_pos()
-        if self.x < mouse_pos[0] < self.x + self.width and self.y < mouse_pos[1] < self.y + self.height:
-            # Check for click event
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.callback:
-                    self.callback()  # Execute callback function
+
+        # Calculate circle positions
+        left_circle_x = self.x - self.circle_radius
+        left_circle_y = self.y + self.height // 2
+        right_circle_x = self.x + self.width + self.circle_radius
+        right_circle_y = self.y + self.height // 2
+
+        # Check if mouse is over left circle
+        left_dist = ((mouse_pos[0] - left_circle_x) ** 2 +
+                     (mouse_pos[1] - left_circle_y) ** 2)
+        left_clicked = left_dist <= self.circle_radius ** 2
+
+        # Check if mouse is over right circle
+        right_dist = ((mouse_pos[0] - right_circle_x) ** 2 +
+                      (mouse_pos[1] - right_circle_y) ** 2)
+        right_clicked = right_dist <= self.circle_radius ** 2
+
+        # Check for click events
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if left_clicked:
+                    if self.callback:
+                        self.callback("positive connector", mouse_pos[0], mouse_pos[1])
+                    return True
+                elif right_clicked:
+                    if self.callback:
+                        self.callback("negative connector", mouse_pos[0], mouse_pos[1])
+                    return True
+                elif (self.x < mouse_pos[0] < self.x + self.width and
+                      self.y < mouse_pos[1] < self.y + self.height):
+                    self.dragging = True
+                    if self.callback:
+                        self.callback("body", mouse_pos[0], mouse_pos[1])
+                    return True
+
+        elif event.type == pygame.MOUSEBUTTONUP:  # Released left click
+            if event.button == 1:
+                self.dragging = False
+
+        elif event.type == pygame.MOUSEMOTION:  # Moving mouse
+            if self.dragging:  # If dragging, then move the battery
+                self.callback("body", mouse_pos[0], mouse_pos[1])
+
+        return False
 
 
+# Creates a window that allows the user to adjust the voltage of the battery (CURRENTLY UNUSED)
 class BatteryProperties:
     def __init__(self, battery):
         self.battery = battery
