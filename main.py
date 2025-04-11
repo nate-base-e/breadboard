@@ -5,6 +5,7 @@ from pygame import mixer
 from components.Buttons import Button
 from components.battery import Battery
 from components.wire import Wire
+from components.gates import Gates
 
 # pygame setup
 
@@ -21,6 +22,17 @@ def main():
     wires = []
     drawing_wire = False
     wire_start = None
+
+    # Gates assets
+    gate_sprite = pg.image.load("images/and or not gates.png").convert_alpha()
+    gate_width = gate_sprite.get_width() // 3
+    gap = 20
+
+    and_gate = Gates("AND", "G1", 220, 100, gate_sprite)
+    or_gate = Gates("OR", "G2", 220 + gate_width + gap, 100, gate_sprite)
+    not_gate = Gates("NOT", "G3", 220 + (gate_width + gap) * 2, 100, gate_sprite)
+    gates = [and_gate, or_gate, not_gate]
+
 
     def PushButton():
         print('button pushed')
@@ -62,9 +74,17 @@ def main():
                 True
                 #STUFF HERE
 
+            #gates info
+            for gate in gates:
+                gate.handle_event(event)
+
+        for gate in gates:
+            gate.draw(screen)
+
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
+
 
         #KWALPOLE---------------------------------------------------------
         #create list of squares 3600
@@ -88,3 +108,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
