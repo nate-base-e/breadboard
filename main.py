@@ -25,8 +25,8 @@ def main():
     def PushButton():
         print('button pushed')
 
-    def PushBattery(part):  # part: which part of the battery was clicked
-        print(part)
+    def PushBattery():
+        print('battery pushed')
 
     button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0),PushButton)
     ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
@@ -63,6 +63,13 @@ def main():
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
+
+        #KWALPOLE---------------------------------------------------------
+        #create list of squares 3600
+
+        #for loop of drawing each square in list
+
+        #------------------------------------------------------------------
 
 
         # Draw wires
