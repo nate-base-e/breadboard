@@ -1,1 +1,1 @@
-Resistor file 
+#Resistor file

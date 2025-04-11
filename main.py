@@ -47,6 +47,8 @@ def main():
             ngButton.handle_event(event)
             battery.handle_event(event)
 
+            # Kory -- Wire Functionality
+            # This code block is the engine for detecting mouse events to start creating a wire. --------------
             if event.type == pg.MOUSEBUTTONDOWN:
                 wire_start = pg.mouse.get_pos()
                 drawing_wire = True
@@ -57,6 +59,9 @@ def main():
                 print(f"Wire from {wire_start} to {wire_end}")
                 drawing_wire = False
                 wire_start = None
+            # --------------------------------------------------------------------------------------------------
+
+
 
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 True
