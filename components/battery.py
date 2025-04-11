@@ -19,12 +19,17 @@ class Battery:
         self.circle_radius = height // 5  # Radius for the end circles
         self.circle_color = (200, 200, 200)  # Light gray color for circles
 
+        self.dragging = False
+
     def getVoltage(self):
         return self.voltage
 
     def setVoltage(self, voltage):
         self.voltage = voltage
         self.text = f"{round(voltage, 1)}V"
+
+    def move(self, pos):
+        self.x, self.y = abs(pos[0] - self.width/2), abs(pos[1] - self.height/2)
 
     def draw(self, screen):
         # Render the text
@@ -71,19 +76,29 @@ class Battery:
 
         # Check for click events
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if left_clicked:
-                if self.callback:
-                    self.callback("positive connector")
-                return True
-            elif right_clicked:
-                if self.callback:
-                    self.callback("negative connector")
-                return True
-            elif (self.x < mouse_pos[0] < self.x + self.width and
-                  self.y < mouse_pos[1] < self.y + self.height):
-                if self.callback:
-                    self.callback("body")
-                return True
+            if event.button == 1:
+                if left_clicked:
+                    if self.callback:
+                        self.callback("positive connector", mouse_pos[0], mouse_pos[1])
+                    return True
+                elif right_clicked:
+                    if self.callback:
+                        self.callback("negative connector", mouse_pos[0], mouse_pos[1])
+                    return True
+                elif (self.x < mouse_pos[0] < self.x + self.width and
+                      self.y < mouse_pos[1] < self.y + self.height):
+                    self.dragging = True
+                    if self.callback:
+                        self.callback("body", mouse_pos[0], mouse_pos[1])
+                    return True
+
+        elif event.type == pygame.MOUSEBUTTONUP:  # Released left click
+            if event.button == 1:
+                self.dragging = False
+
+        elif event.type == pygame.MOUSEMOTION:  # Moving mouse
+            if self.dragging:  # If dragging, then move the battery
+                self.callback("body", mouse_pos[0], mouse_pos[1])
 
         return False
 
