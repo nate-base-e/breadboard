@@ -25,8 +25,10 @@ def main():
     def PushButton():
         print('button pushed')
 
-    def PushBattery():
-        print('battery pushed')
+    def PushBattery(part, x, y):
+        if part == "body":  # Pushing the body of the battery
+            pos = round(x/20)*20, round(y/20)*20  # Grid movement
+            battery.move(pos)
 
     button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0),PushButton)
     ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
@@ -45,21 +47,16 @@ def main():
             ngButton.handle_event(event)
             battery.handle_event(event)
 
-            # Kory -- Wire start and end location obtain code
-            # Wire Code -------------------------------------------------------------------------------
             if event.type == pg.MOUSEBUTTONDOWN:
-                wire_start = pg.mouse.get_pos() #wire_start = breadboard.getLocation(AtLocationOfClick)
-                #wire_component1 = breadboard.getComponentNode(AtLocationOfClick)
+                wire_start = pg.mouse.get_pos()
                 drawing_wire = True
 
             elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                wire_end = pg.mouse.get_pos() #wire_end = breadboard.getLocation(AtLocationOfClick)
-                # wire_component2 = breadboard.getComponentNode(AtLocationOfClick)
-                wires.append(Wire(wire_start, wire_end)) #wires.append(Wire(wire_start, wire_component1, wire_end, wire_component2))
+                wire_end = pg.mouse.get_pos()
+                wires.append(Wire(wire_start, wire_end))
                 print(f"Wire from {wire_start} to {wire_end}")
                 drawing_wire = False
                 wire_start = None
-            # Wire Code---------------------------------------------------------------------------------
 
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 True
@@ -69,15 +66,21 @@ def main():
         ngButton.draw(screen)
         battery.draw(screen)
 
-        # Kory -- Wire Draw
-        # Draw Wires -------------------------------------------------------------------------
+        #KWALPOLE---------------------------------------------------------
+        #create list of squares 3600
+
+        #for loop of drawing each square in list
+
+        #------------------------------------------------------------------
+
+
+        # Draw wires
         for wire in wires:
             wire.draw(screen)
 
         if drawing_wire and wire_start:
             current_pos = pg.mouse.get_pos()
             pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
-        # Draw Wires -------------------------------------------------------------------------
 
 
         pg.display.flip()
