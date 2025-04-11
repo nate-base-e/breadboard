@@ -53,7 +53,7 @@ def main():
                 drawing_wire = True
 
             elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                wire_end = round(pg.mouse.get_pos()[0]/20)*20, round(pg.mouse.get_pos()[1]/20)*20
+                wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
                 wires.append(Wire(wire_start, wire_end))
                 print(f"Wire from {wire_start} to {wire_end}")
                 drawing_wire = False
