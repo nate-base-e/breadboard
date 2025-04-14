@@ -71,10 +71,10 @@ def main():
             square_list.append(square_obj)
 
             square_num += 1
-            pos_x += 16
+            pos_x += GRID_SIZE
 
             if pos_x == 1280:
-                pos_y += 16
+                pos_y += GRID_SIZE
                 pos_x = 0
 
         # ------------------------------------------------------------------
