@@ -4,6 +4,7 @@ from pygame import mixer
 
 from components.Buttons import Button
 from components.battery import Battery
+from components.square import Square
 from components.wire import Wire
 from components.gates import Gates
 
@@ -35,6 +36,8 @@ def main():
     gates = [and_gate, or_gate, not_gate]
 
 
+
+
     def PushButton():
         print('button pushed')
 
@@ -51,6 +54,31 @@ def main():
 
     while running:
         screen.fill((30,30,30))
+
+        # KWALPOLE---------------------------------------------------------
+        # create list of squares 3600
+        square_list = []
+        MAX_SQUARES = 3600
+
+        pos_x = 0
+        pos_y = 0
+        square_num = 0
+
+        # while loop creates all squares and adds them to list, draw function is handled during object initialization
+        # the creation of these squares needs to happen before all other draw functions, and after screen fill
+        while square_num < MAX_SQUARES:
+            square_obj = Square(screen, pos_x, pos_y)
+            square_list.append(square_obj)
+
+            square_num += 1
+            pos_x += 16
+
+            if pos_x == 1280:
+                pos_y += 16
+                pos_x = 0
+
+        # ------------------------------------------------------------------
+
         # button event
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -92,12 +120,6 @@ def main():
         battery.draw(screen)
 
 
-        #KWALPOLE---------------------------------------------------------
-        #create list of squares 3600
-
-        #for loop of drawing each square in list
-
-        #------------------------------------------------------------------
 
 
         # Draw wires
