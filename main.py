@@ -37,18 +37,13 @@ def main():
 
 
 
-
     def PushButton():
         print('button pushed')
 
-    def PushBattery(part, x, y):
-        if part == "body":  # Pushing the body of the battery
-            pos = round(x/GRID_SIZE)*GRID_SIZE, round(y/GRID_SIZE)*GRID_SIZE  # Grid movement
-            battery.move(pos)
 
     button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0),PushButton)
     ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
-    battery = Battery(x=30, y=0, width=100, height=40, callback=PushBattery)
+    battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
     hI = 0
     rollTime = 0
 
@@ -87,6 +82,8 @@ def main():
             button.handle_event(event)
             ngButton.handle_event(event)
             battery.handle_event(event)
+            if battery.properties.visible:
+                battery.properties.handle_event(event)
 
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
@@ -118,7 +115,8 @@ def main():
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
-
+        if battery.properties.visible:
+            battery.properties.draw()
 
 
 
