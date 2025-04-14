@@ -55,7 +55,7 @@ def main():
     while running:
         screen.fill((30,30,30))
 
-        # KWALPOLE---------------------------------------------------------
+        # Keegan---------------------------------------------------------
         # create list of squares 3600
         square_list = []
         MAX_SQUARES = 3600
