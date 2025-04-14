@@ -25,8 +25,8 @@ def main():
     drawing_wire = False
     wire_start = None
 
-    # Gates assets
-    gate_sprite = pg.image.load("images/and or not gates.png").convert_alpha()
+    # gates assets
+    gate_sprite = pg.image.load("images/and or not gates f.png").convert_alpha()
     gate_width = gate_sprite.get_width() // 3
     gap = 20
 
