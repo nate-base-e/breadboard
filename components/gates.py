@@ -51,10 +51,20 @@ class Gates:
 
     def draw(self, surface):
         #draw the correct part of the sprite sheet onto the screen
-        gate_width = self.image.get_width() // 3
+        full_width = self.image.get_width()
+        gate_width = full_width // 3
         gate_height = self.image.get_height()
-        src_rect = pg.Rect(self.sprite_index * gate_width, 0, gate_width, gate_height)
-        surface.blit(self.image, self.rect, area=src_rect)  # blit that section at current position
+        # crop 2px from left and right to remove border lines (aesthetic)
+        crop_left = 2
+        crop_right = 2
+        cropped_width = gate_width - (crop_left + crop_right)
+
+        src_x = self.sprite_index * gate_width + crop_left
+        src_rect = pg.Rect(src_x, 0, cropped_width, gate_height)
+
+        # adjust drawing size to match cropped width
+        draw_rect = pg.Rect(self.rect.x, self.rect.y, cropped_width, gate_height)
+        surface.blit(self.image, draw_rect, area=src_rect) # blit that section at current position
 
     def handle_event(self, event):
         #handle mouse events for dragging the gate
