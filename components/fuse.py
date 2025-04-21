@@ -11,7 +11,7 @@ class Fuse:
         self.offset_x = 0
         self.offset_y = 0
         self.blown = False
-
+#
     def draw(self, surface):
         self.rect.topleft = (self.x, self.y)
         center_y = self.y + self.height // 2
