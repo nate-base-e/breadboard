@@ -4,7 +4,7 @@ import os
 
 class Resistor:
     def __init__(self, x, y):
-        image_path = os.path.join("images", "Resistor.png")
+        image_path = os.path.join("images", "Resistor.png") # call the image
         try:
             self.image = pg.image.load(image_path)
         except Exception as e:
