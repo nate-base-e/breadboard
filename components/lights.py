@@ -1,40 +1,57 @@
-import pygame
-
-# example of how to draw it in main: lights.drawNumber(screen,3)
+import pygame as pg
 class Lights:
 
-    def __init__(self,x,y):
+    def __init__(self,x,y,off_image,on_image):
 
         self.x = x
         self.y = y
+        self.on_image = on_image
+        self.off_image = off_image
+        self.rect = self.off_image.get_rect()
 
-        self.segment_positions = [
-            (x+5,y,20,5),
-            (x+25,y+5,5,20),
-            (x+25,y+30,5,20),
-            (x+5,y+50,20,5),
-            (x,y+30,5,20),
-            (x,y+5,5,20),
-            (x+5,y+25,20,5)
-        ]
+        self.state = False
 
-        # dictionary for each segments and there sizes for the rectangles when drawn
-        self.binaries = {0:[1,1,1,1,1,1,0],
-                         1:[0,1,1,0,0,0,0],
-                         2:[1,1,0,1,1,0,1],
-                         3:[1,1,1,1,0,0,1],
-                         4:[0,1,1,0,0,1,1],
-                         5:[1,0,1,1,0,1,1],
-                         6:[1,0,1,1,1,1,1],
-                         7:[1,1,1,0,0,0,0],
-                         8:[1,1,1,1,1,1,1],
-                         9:[1,1,1,0,0,1,1]}
+        self.dragging = False
+        self.offset_x = 0
+        self.offset_y = 0
 
-    def drawNumber(self,surface,number):
-        segments = self.binaries[number]
-        pygame.draw.rect(surface,'black',(self.x,self.y,30,55))
-        for i, on in enumerate(segments):
-            if on:
-                pygame.draw.rect(surface,'red',self.segment_positions[i])
-            else:
-                pygame.draw.rect(surface, 'black', self.segment_positions[i])
+    def draw(self, surface):
+        if self.state:
+            surface.blit(self.on_image, self.rect)
+        else:
+            surface.blit(self.off_image, self.rect)
+
+
+    def handle_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.dragging = True
+                mouse_x, mouse_y = event.pos
+                self.offset_x = self.rect.x - mouse_x
+                self.offset_y = self.rect.y - mouse_y
+                return True  # Indicate this LED was clicked
+
+        elif event.type == pg.MOUSEBUTTONUP:
+            self.dragging = False
+
+        elif event.type == pg.MOUSEMOTION and self.dragging:
+            mouse_x, mouse_y = event.pos
+            self.rect.x = mouse_x + self.offset_x
+            self.rect.y = mouse_y + self.offset_y
+
+        return False
+
+    def stop_dragging(self):
+        self.dragging = False
+
+    def turn_on(self):
+        self.state = True
+
+    def turn_off(self):
+        self.state = False
+
+    def toggle(self):
+        self.state = not self.state
+
+    def is_on(self):
+        return self.state
