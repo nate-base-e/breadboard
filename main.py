@@ -13,6 +13,12 @@ from components.lights import Lights
 
 GRID_SIZE = 20
 
+
+# This checks if any component that exists is being dragged. All components should return if not being dragged "self.dragging = False"
+def is_any_component_dragging(components):
+    return any(getattr(comp, 'dragging', False) for comp in components)
+
+
 def main():
     # Your program's code goes here
     pg.init()
@@ -25,6 +31,7 @@ def main():
     wires = []
     drawing_wire = False
     wire_start = None
+
 
     # gates assets
     gate_sprite = pg.image.load("images/and or not gates f.png").convert_alpha()
@@ -52,6 +59,10 @@ def main():
     led = Lights(100,100,off_img,on_img)
     hI = 0
     rollTime = 0
+
+    # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
+
+    components = [battery,led,and_gate,or_gate,not_gate]
 
     while running:
         screen.fill((30,30,30))
@@ -92,18 +103,23 @@ def main():
             if battery.properties.visible:
                 battery.properties.handle_event(event)
 
+            #gates info
+            for gate in gates:
+                gate.handle_event(event)
+
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
-            if event.type == pg.MOUSEBUTTONDOWN:
-                wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-                drawing_wire = True
+            if not is_any_component_dragging(components):
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+                    drawing_wire = True
 
-            elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-                wires.append(Wire(wire_start, wire_end))
-                print(f"Wire from {wire_start} to {wire_end}")
-                drawing_wire = False
-                wire_start = None
+                elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
+                    wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+                    wires.append(Wire(wire_start, wire_end))
+                    print(f"Wire from {wire_start} to {wire_end}")
+                    drawing_wire = False
+                    wire_start = None
             # --------------------------------------------------------------------------------------------------
 
 
@@ -111,10 +127,6 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 True
                 #STUFF HERE
-
-            #gates info
-            for gate in gates:
-                gate.handle_event(event)
 
         for gate in gates:
             gate.draw(screen)
