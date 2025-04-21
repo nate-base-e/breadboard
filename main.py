@@ -5,6 +5,8 @@ from pygame import mixer
 from components.Buttons import Button
 from components.battery import Battery
 from components.square import Square
+from components.fuse import Fuse
+
 from components.wire import Wire
 from components.gates import Gates
 from components.lights import Lights
@@ -12,6 +14,7 @@ from components.lights import Lights
 # pygame setup
 
 GRID_SIZE = 20
+
 
 def main():
     # Your program's code goes here
@@ -53,6 +56,13 @@ def main():
     hI = 0
     rollTime = 0
 
+
+    #tooolbooxxxxx
+
+    fuse = Fuse(500, 300)  # adjust position as needed
+
+    #tooollboxxx
+
     while running:
         screen.fill((30,30,30))
 
@@ -92,6 +102,10 @@ def main():
             if battery.properties.visible:
                 battery.properties.handle_event(event)
 
+
+
+
+
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
             if event.type == pg.MOUSEBUTTONDOWN:
@@ -105,9 +119,10 @@ def main():
                 drawing_wire = False
                 wire_start = None
             # --------------------------------------------------------------------------------------------------
+            #fugeeeeeeee
+            fuse.handle_event(event)
 
-
-
+            #fugeeeeeeeeee
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 True
                 #STUFF HERE
@@ -136,7 +151,9 @@ def main():
             current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
 
-
+       #fugeeeeeee
+        fuse.draw(screen)
+        #fugeeeeeee
         pg.display.flip()
         clock.tick(60)
 
