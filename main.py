@@ -10,8 +10,7 @@ from components.fuse import Fuse
 from components.wire import Wire
 from components.gates import Gates
 from components.lights import Lights
-
-# pygame setup
+from components.Resistor import Resistor
 
 GRID_SIZE = 20
 
@@ -48,10 +47,10 @@ def main():
     def PushButton():
         print('button pushed')
 
-
-    button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0),PushButton)
+    button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
     ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
     battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
+    resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
     hI = 0
     rollTime = 0
@@ -64,19 +63,15 @@ def main():
     #tooollboxxx
 
     while running:
-        screen.fill((30,30,30))
+        screen.fill((30, 30, 30))
 
-        # Keegan---------------------------------------------------------
-        # create list of squares 3600
+        # Square grid
         square_list = []
         MAX_SQUARES = 3600
-
         pos_x = 0
         pos_y = 0
         square_num = 0
 
-        # while loop creates all squares and adds them to list, draw function is handled during object initialization
-        # the creation of these squares needs to happen before all other draw functions, and after screen fill
         while square_num < MAX_SQUARES:
             square_obj = Square(screen, pos_x, pos_y)
             square_list.append(square_obj)
@@ -88,9 +83,7 @@ def main():
                 pos_y += GRID_SIZE
                 pos_x = 0
 
-        # ------------------------------------------------------------------
-
-        # button event
+        # Events
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -101,7 +94,11 @@ def main():
             led.handle_event(event)
             if battery.properties.visible:
                 battery.properties.handle_event(event)
+            resistor.handle_event(event)
 
+            # ✅ Fixed safe wire-drawing logic
+            if event.type == pg.MOUSEBUTTONDOWN and not resistor.is_dragging():
+                wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
 
 
 
@@ -113,7 +110,7 @@ def main():
                 drawing_wire = True
 
             elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+                wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
                 wires.append(Wire(wire_start, wire_end))
                 print(f"Wire from {wire_start} to {wire_end}")
                 drawing_wire = False
@@ -123,11 +120,10 @@ def main():
             fuse.handle_event(event)
 
             #fugeeeeeeeeee
-            if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
-                True
-                #STUFF HERE
 
-            #gates info
+            if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
+                pass
+
             for gate in gates:
                 gate.handle_event(event)
 
@@ -138,17 +134,16 @@ def main():
         ngButton.draw(screen)
         battery.draw(screen)
         led.draw(screen)
+        resistor.draw(screen)
+
         if battery.properties.visible:
             battery.properties.draw()
 
-
-
-        # Draw wires
         for wire in wires:
             wire.draw(screen)
 
         if drawing_wire and wire_start:
-            current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+            current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
 
        #fugeeeeeee
@@ -159,4 +154,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
