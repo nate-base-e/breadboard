@@ -7,6 +7,7 @@ from components.battery import Battery
 from components.square import Square
 from components.wire import Wire
 from components.gates import Gates
+from components.lights import Lights
 
 # pygame setup
 
@@ -35,6 +36,10 @@ def main():
     not_gate = Gates("NOT", "G3", 220 + (gate_width + gap) * 2, 100, gate_sprite)
     gates = [and_gate, or_gate, not_gate]
 
+    # lights assets
+    on_img = pg.image.load("images/onled.png").convert_alpha()
+    off_img = pg.image.load("images/offled.png").convert_alpha()
+
 
 
     def PushButton():
@@ -44,6 +49,7 @@ def main():
     button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0),PushButton)
     ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
     battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
+    led = Lights(100,100,off_img,on_img)
     hI = 0
     rollTime = 0
 
@@ -82,6 +88,7 @@ def main():
             button.handle_event(event)
             ngButton.handle_event(event)
             battery.handle_event(event)
+            led.handle_event(event)
             if battery.properties.visible:
                 battery.properties.handle_event(event)
 
@@ -115,6 +122,7 @@ def main():
         button.draw(screen)
         ngButton.draw(screen)
         battery.draw(screen)
+        led.draw(screen)
         if battery.properties.visible:
             battery.properties.draw()
 
