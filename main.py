@@ -5,16 +5,21 @@ from pygame import mixer
 from components.Buttons import Button
 from components.battery import Battery
 from components.square import Square
-from components.fuse import Fuse
-
 from components.wire import Wire
 from components.gates import Gates
 from components.lights import Lights
 from components.Resistor import Resistor
+from components.fuse import Fuse
 
 GRID_SIZE = 20
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+
+
+# This checks if any component that exists is being dragged. All components should return if not being dragged "self.dragging = False"
+def is_any_component_dragging(components):
+    return any(getattr(comp, 'dragging', False) for comp in components)
+
 
 
 def main():
@@ -54,15 +59,12 @@ def main():
     battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
+    fuse = Fuse(500, 300)  # adjust position as needed
     hI = 0
     rollTime = 0
 
-
-    #tooolbooxxxxx
-
-    fuse = Fuse(500, 300)  # adjust position as needed
-
-    #tooollboxxx
+    # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
+    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse]
 
     while running:
         screen.fill((30, 30, 30))
@@ -106,38 +108,37 @@ def main():
             if battery.properties.visible:
                 battery.properties.handle_event(event)
             resistor.handle_event(event)
-
-            # ✅ Fixed safe wire-drawing logic
-            if event.type == pg.MOUSEBUTTONDOWN and not resistor.is_dragging():
-                wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
+            fuse.handle_event(event)
 
 
-
+            #gates info
+            for gate in gates:
+                gate.handle_event(event)
 
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
-            if event.type == pg.MOUSEBUTTONDOWN:
-                wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-                drawing_wire = True
+            if not is_any_component_dragging(components):
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+                    drawing_wire = True
 
-            elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
-                wires.append(Wire(wire_start, wire_end))
-                print(f"Wire from {wire_start} to {wire_end}")
-                drawing_wire = False
-                wire_start = None
+                elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
+                    wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
+                    wires.append(Wire(wire_start, wire_end))
+                    print(f"Wire from {wire_start} to {wire_end}")
+                    drawing_wire = False
+                    wire_start = None
             # --------------------------------------------------------------------------------------------------
             #fugeeeeeeee
-            fuse.handle_event(event)
+
 
             #fugeeeeeeeeee
 
             if event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
                 pass
 
-            for gate in gates:
-                gate.handle_event(event)
 
+        # more gate info
         for gate in gates:
             gate.draw(screen)
 
@@ -146,20 +147,22 @@ def main():
         battery.draw(screen)
         led.draw(screen)
         resistor.draw(screen)
+        fuse.draw(screen)
 
         if battery.properties.visible:
             battery.properties.draw()
 
+
+
+        # Draw wires
         for wire in wires:
             wire.draw(screen)
 
-        if drawing_wire and wire_start:
-            current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE) * GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE) * GRID_SIZE
+        if drawing_wire and wire_start and not is_any_component_dragging(components):
+            current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
 
-       #fugeeeeeee
-        fuse.draw(screen)
-        #fugeeeeeee
+
         pg.display.flip()
         clock.tick(60)
 

@@ -10,11 +10,11 @@ class Wire:
     wire_middle_img = None
     wire_end_img = None
 
-    def __init__(self, start, end, component1=None, component2=None):
+    def __init__(self, start, end,): # component1=None, component2=None
         self.start = start
         self.end = end
-        self.component1 = component1
-        self.component2 = component2
+        # self.component1 = component1
+        # self.component2 = component2
 
         if Wire.wire_start_img is None:
             current_dir = os.path.dirname(__file__)
