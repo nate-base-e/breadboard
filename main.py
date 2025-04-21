@@ -13,12 +13,14 @@ from components.lights import Lights
 from components.Resistor import Resistor
 
 GRID_SIZE = 20
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 
 def main():
     # Your program's code goes here
     pg.init()
-    screen = pg.display.set_mode((1280, 720))
+    screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pg.time.Clock()
     running = True
     dt = 0
@@ -79,9 +81,18 @@ def main():
             square_num += 1
             pos_x += GRID_SIZE
 
-            if pos_x == 1280:
+            if pos_x == SCREEN_WIDTH:
                 pos_y += GRID_SIZE
                 pos_x = 0
+
+        #Keegan------------------------------------------------------------------------------
+
+        #dock for components, still images of components will sit here to be dragged onto the main board
+        pg.draw.rect(screen, "lightblue1", (0, 0, SCREEN_WIDTH, 75))
+
+        #buttons that will activate use of component, ie click button and then be able to place that component
+
+        # ------------------------------------------------------------------
 
         # Events
         for event in pg.event.get():
