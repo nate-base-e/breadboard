@@ -16,8 +16,8 @@ class Battery:
         self.width = width
         self.height = height
 
-        self.circle_radius = height // 5
-        self.circle_color = (255, 255, 255)
+        self.circle_radius = 2
+        self.circle_color = (0, 255, 0)
 
         self.dragging = False
 
@@ -46,13 +46,13 @@ class Battery:
         screen.blit(text_surface, (text_x, text_y))
 
         # Draw left circle (negative terminal)
-        left_circle_x = self.x - self.circle_radius
+        left_circle_x = self.x - self.circle_radius - 8
         left_circle_y = self.y + self.height // 2
         pygame.draw.circle(screen, self.circle_color,
                            (left_circle_x, left_circle_y), self.circle_radius)
 
         # Draw right circle (positive terminal)
-        right_circle_x = self.x + self.width + self.circle_radius
+        right_circle_x = self.x + self.width + self.circle_radius + 8
         right_circle_y = self.y + self.height // 2
         pygame.draw.circle(screen, self.circle_color,
                            (right_circle_x, right_circle_y), self.circle_radius)
@@ -86,6 +86,7 @@ class Battery:
                 elif (self.x < mouse_pos[0] < self.x + self.width and
                       self.y < mouse_pos[1] < self.y + self.height):  # Click battery body
                     self.dragging = True
+                    self.properties.visible = False
                     pos = round(mouse_pos[0]/GRID_SIZE)*GRID_SIZE, round(mouse_pos[1]/GRID_SIZE)*GRID_SIZE
                     self.move(pos)
                     return True
