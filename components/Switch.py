@@ -14,6 +14,15 @@ class Switch:
         self.rect = self.on_image.get_rect()
         self.rect.topleft = (x, y)
 
+        self.dragging = False
+        self.offset_x = 0
+        self.offset_y = 0
+
+        self.to_delete = False
+
+        self.mouse_down_pos = None
+        self.drag_threshold = 5
+
     #toggle the switch on or off
     def toggle(self):
         self.state = not self.state
@@ -31,6 +40,9 @@ class Switch:
     def is_on(self):
         return self.state
 
+    def delete(self):
+        self.to_delete = True
+
     #draw the surface on the provided surface
     def draw(self, surface):
         if self.state:
@@ -41,10 +53,65 @@ class Switch:
     #handle mouse events on toggling the switch
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.toggle()
-                return True
+            if event.button == 1: #Left Mouse button
+                if self.rect.collidepoint(event.pos):
+                    #Store init position for drag detection
+                    self.mouse_down_pos = event.pos
+                    #calc offset for smooth dragging
+                    mouse_x, mouse_y = event.pos
+                    self.offset_x = self.rect.x - mouse_x
+                    self.offset_y = self.rect.y - mouse_y
+                    return "selected"
+
+            elif event.button == 3: #right mouse button
+                if self.rect.collidepoint(event.pos):
+                    self.delete()
+                    return "deleted"
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1: #left mouse button
+                if self.dragging:
+                    #end dragging
+                    self.dragging = False
+                    return "dropped"
+                elif self.mouse_down_pos and self.rect.collidepoint(event.pos):
+                    #mouse released at same position, toggle switch
+                    mouse_x, mouse_y = event.pos
+                    initial_x, initial_y = self.mouse_down_pos
+                    distance = ((mouse_x - initial_x)**2 + (mouse_y - initial_y)**2)**0.5
+
+                    if distance <= self.drag_threshold:
+                        self.toggle()
+                        return "toggled"
+
+                self.mouse_down_pos = None
+
+        elif event.type == pygame.MOUSEMOTION:
+            if self.mouse_down_pos and not self.dragging:
+                #check if moved enough to start dragging
+                mouse_x, mouse_y = event.pos
+                initial_x, initial_y = self.mouse_down_pos
+                distance = ((mouse_x - initial_x)**2 + (mouse_y - initial_y)**2)**0.5
+
+                if distance <= self.drag_threshold:
+                    self.dragging = True
+
+            if self.dragging:
+                #update pos while dragging
+                mouse_x, mouse_y = event.pos
+                self.rect.x = mouse_x + self.offset_x
+                self.rect.y = mouse_y + self.offset_y
+                self.x = self.rect.x
+                self.y = self.rect.y
+                return "dragging"
+
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_DELETE and self.rect.collidepoint(pygame.mouse.get_pos()):
+                self.delete()
+                return "deleted"
+
         return False
+
 
     #shows what the switch is at
     def __repr__(self):
