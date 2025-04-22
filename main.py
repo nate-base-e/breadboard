@@ -2,7 +2,6 @@ import pygame as pg
 from random import random
 from pygame import mixer
 
-from components.Buttons import Button
 from components.battery import Battery
 from components.square import Square
 from components.wire import Wire
@@ -51,11 +50,7 @@ def main():
 
 
 
-    def PushButton():
-        print('button pushed')
 
-    button = Button(680, 500, 140, 52, "Button 1", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
-    ngButton = Button(680, 580, 140, 52, "Button 2", 32, (45, 45, 45), (100, 100, 100), (100, 100, 100), (0, 0, 0), PushButton)
     battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
@@ -101,8 +96,6 @@ def main():
             if event.type == pg.QUIT:
                 running = False
 
-            button.handle_event(event)
-            ngButton.handle_event(event)
             battery.handle_event(event)
             led.handle_event(event)
             if battery.properties.visible:
@@ -142,8 +135,6 @@ def main():
         for gate in gates:
             gate.draw(screen)
 
-        button.draw(screen)
-        ngButton.draw(screen)
         battery.draw(screen)
         led.draw(screen)
         resistor.draw(screen)
