@@ -48,10 +48,11 @@ def main():
     on_img = pg.image.load("images/onled.png").convert_alpha()
     off_img = pg.image.load("images/offled.png").convert_alpha()
 
+    # Batteries
+    batteries = []  # Allows for multiple batteries
+    batteries.append(Battery(x=30, y=0, width=100, height=40, screen=screen))
 
 
-
-    battery = Battery(x=30, y=0, width=100, height=40, screen=screen)
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
     fuse = Fuse(500, 300)  # adjust position as needed
@@ -59,7 +60,8 @@ def main():
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse]
+    components = [led,and_gate,or_gate,not_gate,resistor,fuse]
+    components.extend(batteries)  # Adds all batteries to components
 
     while running:
         screen.fill((30, 30, 30))
@@ -96,10 +98,7 @@ def main():
             if event.type == pg.QUIT:
                 running = False
 
-            battery.handle_event(event)
             led.handle_event(event)
-            if battery.properties.visible:
-                battery.properties.handle_event(event)
             resistor.handle_event(event)
             fuse.handle_event(event)
 
@@ -107,6 +106,12 @@ def main():
             #gates info
             for gate in gates:
                 gate.handle_event(event)
+
+            # Batteries
+            for battery in batteries:
+                battery.handle_event(event)
+                if battery.properties.visible:
+                    battery.properties.handle_event(event)
 
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
@@ -135,13 +140,15 @@ def main():
         for gate in gates:
             gate.draw(screen)
 
-        battery.draw(screen)
+        for battery in batteries:
+            battery.draw(screen)
+            if battery.properties.visible:
+                battery.properties.draw()
+
         led.draw(screen)
         resistor.draw(screen)
         fuse.draw(screen)
 
-        if battery.properties.visible:
-            battery.properties.draw()
 
 
 
