@@ -9,6 +9,7 @@ from components.gates import Gates
 from components.lights import Lights
 from components.Resistor import Resistor
 from components.fuse import Fuse
+from components.wavegen import WaveGen
 
 GRID_SIZE = 20
 SCREEN_WIDTH = 1280
@@ -55,11 +56,12 @@ def main():
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
     fuse = Fuse(500, 300)  # adjust position as needed
+    wavegen = WaveGen(600, 100, "images/Wave Gen.jpg")  # adjust x, y position as needed
     hI = 0
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse]
+    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse, wavegen]
 
     while running:
         screen.fill((30, 30, 30))
@@ -102,6 +104,7 @@ def main():
                 battery.properties.handle_event(event)
             resistor.handle_event(event)
             fuse.handle_event(event)
+            wavegen.handle_event(event)
 
 
             #gates info
@@ -139,6 +142,7 @@ def main():
         led.draw(screen)
         resistor.draw(screen)
         fuse.draw(screen)
+        wavegen.draw(screen)
 
         if battery.properties.visible:
             battery.properties.draw()
