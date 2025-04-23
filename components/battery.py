@@ -106,6 +106,13 @@ class Battery:
 
         return False
 
+    # This code is for the wire to call and get the nodes of this component, do not remove (unless you want to break something in which case go ahead).
+    def get_node_positions(self):
+        return {
+            "left": (self.x - self.circle_radius, self.y + self.height // 2),
+            "right": (self.x + self.width + self.circle_radius, self.y + self.height // 2)
+        }
+
 
 # Creates a window that allows the user to adjust the voltage of the battery
 class BatteryProperties:
