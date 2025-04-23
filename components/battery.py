@@ -145,6 +145,9 @@ class BatteryProperties:
         self.update_slider_handle()
         self.dragging = False
 
+        # Exit button
+        self.exit_rect = pygame.Rect(x+360, y, 15, 15)
+
     def move(self, x, y):
         self.x = x
         self.y = y
@@ -169,6 +172,9 @@ class BatteryProperties:
                 self.active = True
             else:
                 self.active = False
+
+            if self.exit_rect.collidepoint(event.pos):
+                self.visible = False
 
             # Check if clicked on slider handle or track
             if (self.slider_handle_rect.collidepoint(event.pos) or
@@ -259,3 +265,7 @@ class BatteryProperties:
         handle_color = self.WHITE
         pygame.draw.rect(self.screen, handle_color, self.slider_handle_rect, border_radius=3)
         pygame.draw.rect(self.screen, self.BLACK, self.slider_handle_rect, 1, border_radius=3)
+
+        # Draw text
+        text_surface = self.font.render("X", True, (0, 0, 0))
+        self.screen.blit(text_surface, (self.x+360, self.y))
