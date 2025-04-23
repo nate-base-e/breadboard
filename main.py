@@ -67,7 +67,7 @@ def main():
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
     fuse = Fuse(500, 300)  # adjust position as needed
-    wavegen = WaveGen(600, 100, "images/WaveGen.jpg")
+    wavegen = WaveGen("images/WaveGen.jpg", (600, 100))
     hI = 0
     rollTime = 0
 
@@ -81,7 +81,10 @@ def main():
 
         # Square grid
         square_list = []
-        MAX_SQUARES = 3600
+        #Keegan
+        #MAX_SQUARES now changes according do SCREEN_WIDTH and SCREEN_HEIGHT
+        MAX_SQUARES = (SCREEN_WIDTH/GRID_SIZE) * (SCREEN_HEIGHT/GRID_SIZE)
+        #------------------------------------------------------------------
         pos_x = 0
         pos_y = 0
         square_num = 0
@@ -97,14 +100,6 @@ def main():
                 pos_y += GRID_SIZE
                 pos_x = 0
 
-        #Keegan------------------------------------------------------------------------------
-
-        #dock for components, still images of components will sit here to be dragged onto the main board
-        pg.draw.rect(screen, "lightblue1", (0, 0, SCREEN_WIDTH, 75))
-
-        #buttons that will activate use of component, ie click button and then be able to place that component
-
-        # ------------------------------------------------------------------
 
         # Events
         for event in pg.event.get():
