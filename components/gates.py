@@ -26,6 +26,24 @@ class Gates:
         #0 = AND 1 = OR 2 = NOT
         self.sprite_index = {"AND": 0, "OR": 1, "NOT": 2}.get(self.gate_type, 0)
 
+        #node variables
+        self.circle_radius = 4
+        self.circle_color = (0, 255, 0)  # green nodes
+
+        self.update_nodes()
+
+    def update_nodes(self):
+        self.input_nodes = []
+
+        inset = -50  # pixels from the edge
+
+        if self.gate_type == "NOT":
+            self.input_nodes.append((self.rect.left - inset, self.rect.centery))
+        else:
+            self.input_nodes.append((self.rect.left - inset, self.rect.top + 10))
+            self.input_nodes.append((self.rect.left - inset, self.rect.bottom - 10))
+
+        self.output_node = (self.rect.right + inset, self.rect.centery)
 
     def set_inputs(self, *inputs):
         #set input vals for this gate
@@ -66,6 +84,13 @@ class Gates:
         draw_rect = pg.Rect(self.rect.x, self.rect.y, cropped_width, gate_height)
         surface.blit(self.image, draw_rect, area=src_rect) # blit that section at current position
 
+        # drawing nodes
+        for pos in self.input_nodes:
+            pg.draw.circle(surface, self.circle_color, pos, self.circle_radius)
+
+        # Draw output node
+        pg.draw.circle(surface, self.circle_color, self.output_node, self.circle_radius)
+
     def handle_event(self, event):
         #handle mouse events for dragging the gate
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -84,8 +109,16 @@ class Gates:
             self.rect.x = mouse_x + self.offset_x
             self.rect.y = mouse_y + self.offset_y
 
+        self.update_nodes()
+
+    #checks if nodes are clicked for seamless wire use
+    def get_clicked_node(self, mouse_pos):
+        for i, pos in enumerate(self.input_nodes):
+            if (pg.Vector2(mouse_pos) - pg.Vector2(pos)).length() <= self.circle_radius:
+                return ("input", i)
+        if (pg.Vector2(mouse_pos) - pg.Vector2(self.output_node)).length() <= self.circle_radius:
+            return ("output", 0)
+        return None
+
     def stop_dragging(self):
         self.dragging = False
-
-
-
