@@ -2,6 +2,7 @@ import pygame as pg
 from random import random
 from pygame import mixer
 
+from components.Switch import Switch
 from components.battery import Battery
 from components.square import Square
 from components.wire import Wire
@@ -49,10 +50,19 @@ def main():
     on_img = pg.image.load("images/onled.png").convert_alpha()
     off_img = pg.image.load("images/offled.png").convert_alpha()
 
+    #template switch for top bar
+    template_switch = Switch(650, 25, "images/Switch_On.png", "images/Switch-Off.png", "TEMPLATE_SWITCH", False)
+    template_switch.is_template = True
     # Batteries
     batteries = []  # Allows for multiple batteries
     batteries.append(Battery(x=30, y=0, width=100, height=40, screen=screen))
 
+    #List for active switches
+    switches = []
+
+    #Flag to track if creating new switch
+    creating_new_switch = False
+    new_switch = None
 
     resistor = Resistor(x=300, y=300)
     led = Lights(100,100,off_img,on_img)
@@ -64,6 +74,7 @@ def main():
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
     components = [led,and_gate,or_gate,not_gate,resistor,fuse, WaveGen]
     components.extend(batteries)  # Adds all batteries to components
+    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
 
     while running:
         screen.fill((30, 30, 30))
@@ -105,6 +116,42 @@ def main():
             fuse.handle_event(event)
             wavegen.handle_event(event)
 
+            #handle template switch for creating new instances
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                if template_switch.rect.collidepoint(event.pos):
+                    creating_new_switch = True
+                    mouse_x, mouse_y = event.pos
+                    new_switch = Switch(mouse_x, mouse_y, "images/Switch-On.png", "images/Switch-Off.png",f"S{len(switches)+1}", False)
+                    new_switch.dragging = True
+                    new_switch.offset_x = 0
+                    new_switch.offset_y = 0
+
+            elif event.type == pg.MOUSEMOTION and creating_new_switch and new_switch:
+                #update pos while dragging new switch
+                mouse_x, mouse_y = event.pos
+                new_switch.rect.x = mouse_x + new_switch.offset_x
+                new_switch.rect.y = mouse_y + new_switch.offset_y
+                new_switch.x = new_switch.rect.x
+                new_switch.y = new_switch.rect.y
+
+            elif event.type == pg.MOUSEBUTTONUP and event.button == 1 and creating_new_switch and new_switch:
+                #Finish creating the new switch
+                creating_new_switch = False
+                new_switch.dragging = False
+
+                #only add switch if placed outside dock
+                if new_switch.rect.y > 75:
+                    switches.append(new_switch)
+                    components.append(new_switch)
+
+                new_switch = None
+
+            #handle existing switches
+            for switch in switches[:]:
+                result = switch.handle_event(event)
+                if result == "deleted":
+                    switches.remove(switch)
+                    components.remove(switch)
 
             #gates info
             for gate in gates:
@@ -154,6 +201,16 @@ def main():
         wavegen.draw(screen)
 
 
+        #draw template switch
+        template_switch.draw(screen)
+
+        #draw new switch being created
+        if creating_new_switch and new_switch:
+            new_switch.draw(screen)
+
+        #draw existing switches
+        for switch in switches:
+            switch.draw(screen)
 
 
         # Draw wires
