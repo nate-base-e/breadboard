@@ -133,7 +133,7 @@ def main():
                 if template_switch.rect.collidepoint(event.pos):
                     creating_new_switch = True
                     mouse_x, mouse_y = event.pos
-                    new_switch = Switch(mouse_x, mouse_y, "images/Switch-On.png", "images/Switch-Off.png",f"S{len(switches)+1}", False)
+                    new_switch = Switch(mouse_x, mouse_y, switch_on_img, switch_off_img,f"S{len(switches)+1}", False)
                     new_switch.dragging = True
                     new_switch.offset_x = 0
                     new_switch.offset_y = 0
