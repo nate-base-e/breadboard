@@ -52,3 +52,11 @@ class Resistor:
 
     def is_dragging(self):
         return self.dragging
+
+# This code is for the wire to call and get the nodes of this component, do not remove (unless you want to break something in which case go ahead).
+    def get_node_positions(self):
+        points = self.get_connection_points()
+        return {
+            "left": (points[0]),
+            "right": (points[1])
+        }

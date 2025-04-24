@@ -21,6 +21,18 @@ SCREEN_HEIGHT = 720
 def is_any_component_dragging(components):
     return any(getattr(comp, 'dragging', False) for comp in components)
 
+# This checks for a node on the component clicked
+def get_clicked_node(components, mouse_pos, radius=10):
+    for comp in components:
+        if hasattr(comp, 'get_node_positions'):
+            for node_name, pos in comp.get_node_positions().items():
+                dist_sq = (mouse_pos[0] - pos[0])**2 + (mouse_pos[1] - pos[1])**2
+                if dist_sq <= radius**2:
+                    return comp, node_name, pos
+    return None, None, None
+
+wire_start_info = None
+
 
 
 def main():
@@ -79,7 +91,7 @@ def main():
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
     components = [led,and_gate,or_gate,not_gate,resistor,fuse, WaveGen]
     components.extend(batteries)  # Adds all batteries to components
-    components = [batteries,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
+    components = [Battery,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
 
     while running:
         screen.fill((30, 30, 30))
@@ -121,7 +133,7 @@ def main():
                 if template_switch.rect.collidepoint(event.pos):
                     creating_new_switch = True
                     mouse_x, mouse_y = event.pos
-                    new_switch = Switch(mouse_x, mouse_y, switch_on_img, switch_off_img,f"S{len(switches)+1}", False)
+                    new_switch = Switch(mouse_x, mouse_y, "images/Switch-On.png", "images/Switch-Off.png",f"S{len(switches)+1}", False)
                     new_switch.dragging = True
                     new_switch.offset_x = 0
                     new_switch.offset_y = 0
@@ -167,15 +179,29 @@ def main():
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
             if not is_any_component_dragging(components):
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    wire_start = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-                    drawing_wire = True
+                    if event.button == 3:  # Right-click
+                        mouse_pos = pg.mouse.get_pos()
+                        for wire in wires[:]:  # copy to avoid modifying list while iterating
+                            if wire.is_hovered(mouse_pos):
+                                wires.remove(wire)
+                                print("Wire removed")
+                                break
+
+                    mouse_pos = pg.mouse.get_pos()
+                    comp, node_name, pos = get_clicked_node(components, mouse_pos)
+                    if comp:
+                        wire_start_info = (comp, node_name, pos)
+                        drawing_wire = True
 
                 elif event.type == pg.MOUSEBUTTONUP and drawing_wire:
-                    wire_end = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-                    wires.append(Wire(wire_start, wire_end))
-                    print(f"Wire from {wire_start} to {wire_end}")
+                    mouse_pos = pg.mouse.get_pos()
+                    comp, node_name, pos = get_clicked_node(components, mouse_pos)
+                    if comp and wire_start_info:
+                        start_comp, start_node, start_pos = wire_start_info
+                        wires.append(Wire(start_pos, pos, start_comp, comp, start_node, node_name))
+                        print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
                     drawing_wire = False
-                    wire_start = None
+                    wire_start_info = None
             # --------------------------------------------------------------------------------------------------
             #fugeeeeeeee
 
@@ -217,9 +243,11 @@ def main():
         for wire in wires:
             wire.draw(screen)
 
-        if drawing_wire and wire_start and not is_any_component_dragging(components):
-            current_pos = round(pg.mouse.get_pos()[0]/GRID_SIZE)*GRID_SIZE, round(pg.mouse.get_pos()[1]/GRID_SIZE)*GRID_SIZE
-            pg.draw.line(screen, (200, 200, 200), wire_start, current_pos, 2)
+        if drawing_wire and wire_start_info and not is_any_component_dragging(components):
+            _, _, start_pos = wire_start_info
+            current_pos = round(pg.mouse.get_pos()[0] / GRID_SIZE) * GRID_SIZE, round(
+                pg.mouse.get_pos()[1] / GRID_SIZE) * GRID_SIZE
+            pg.draw.line(screen, (200, 200, 200), start_pos, current_pos, 2)
 
 
         pg.display.flip()
