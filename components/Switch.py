@@ -9,8 +9,8 @@ class Switch:
         self.x = x
         self.y = y
 
-        self.on_image = pygame.image.load(on_image_path)
-        self.off_image = pygame.image.load(off_image_path)
+        self.on_image = pygame.transform.scale_by(on_image_path, .25)
+        self.off_image = pygame.transform.scale_by(off_image_path,.25)
 
         self.rect = self.on_image.get_rect()
         self.rect.topleft = (x, y)

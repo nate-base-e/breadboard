@@ -50,9 +50,14 @@ def main():
     on_img = pg.image.load("images/onled.png").convert_alpha()
     off_img = pg.image.load("images/offled.png").convert_alpha()
 
+    #switch assets
+    switch_on_img = pg.image.load("images/Switch-On.png").convert_alpha()
+    switch_off_img = pg.image.load("images/Switch-Off.png").convert_alpha()
+
     #template switch for top bar
-    template_switch = Switch(650, 25, "images/Switch_On.png", "images/Switch-Off.png", "TEMPLATE_SWITCH", False)
+    template_switch = Switch(650, 25, switch_on_img, switch_off_img, "TEMPLATE_SWITCH", False)
     template_switch.is_template = True
+
     # Batteries
     batteries = []  # Allows for multiple batteries
     batteries.append(Battery(x=30, y=0, width=100, height=40, screen=screen))
@@ -74,7 +79,7 @@ def main():
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
     components = [led,and_gate,or_gate,not_gate,resistor,fuse, WaveGen]
     components.extend(batteries)  # Adds all batteries to components
-    components = [battery,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
+    components = [batteries,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
 
     while running:
         screen.fill((30, 30, 30))
@@ -116,7 +121,7 @@ def main():
                 if template_switch.rect.collidepoint(event.pos):
                     creating_new_switch = True
                     mouse_x, mouse_y = event.pos
-                    new_switch = Switch(mouse_x, mouse_y, "images/Switch-On.png", "images/Switch-Off.png",f"S{len(switches)+1}", False)
+                    new_switch = Switch(mouse_x, mouse_y, switch_on_img, switch_off_img,f"S{len(switches)+1}", False)
                     new_switch.dragging = True
                     new_switch.offset_x = 0
                     new_switch.offset_y = 0
