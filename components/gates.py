@@ -115,13 +115,18 @@ class Gates:
 
         self.update_nodes()
 
-    def get_clicked_node(self, mouse_pos):
-        for i, pos in enumerate(self.input_nodes):
-            if (pg.Vector2(mouse_pos) - pg.Vector2(pos)).length() <= self.circle_radius:
-                return ("input", i)
-        if (pg.Vector2(mouse_pos) - pg.Vector2(self.output_node)).length() <= self.circle_radius:
-            return ("output", 0)
-        return None
+    def get_node_positions(self):
+        points = {}
+
+        if self.gate_type == "NOT":
+            points["left"] = self.input_nodes[0]  # single input
+        else:
+            # Assuming 2-input gate: assign both inputs
+            points["left_top"] = self.input_nodes[0]
+            points["left_bottom"] = self.input_nodes[1]
+
+        points["right"] = self.output_node  # output always on the right
+        return points
 
     def stop_dragging(self):
         self.dragging = False
