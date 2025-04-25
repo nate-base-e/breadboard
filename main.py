@@ -208,8 +208,11 @@ def main():
                     comp, node_name, pos = get_clicked_node(components, mouse_pos)
                     if comp and wire_start_info:
                         start_comp, start_node, start_pos = wire_start_info
-                        wires.append(Wire(start_pos, pos, start_comp, comp, start_node, node_name))
-                        print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
+                        if comp == start_comp and node_name == start_node:
+                            print("Cannot connect a wire to the same node on both ends.")
+                        else:
+                            wires.append(Wire(start_pos, pos, start_comp, comp, start_node, node_name))
+                            print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
                     drawing_wire = False
                     wire_start_info = None
             # --------------------------------------------------------------------------------------------------

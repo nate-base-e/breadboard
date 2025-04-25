@@ -143,8 +143,8 @@ class Switch:
         width = self.on_image.get_width()
         height = self.on_image.get_height()
         return {
-            "left": (self.x - self.circle_radius - 8, self.y + height // 2),
-            "right": (self.x + width + self.circle_radius + 8, self.y + height // 2)
+            "top": (self.x + width // 2, self.y - self.circle_radius - 8),
+            "bottom": (self.x + width // 2, self.y + height + self.circle_radius + 8)
         }
 
     def __repr__(self):
