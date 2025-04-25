@@ -16,10 +16,8 @@ class Lights:
         self.offset_x = 0
         self.offset_y = 0
 
-
+        self.volt = False
         self.state = False
-
-        self.voltage_threshold = 2
 
         self.nodes = {
             "anode": (
@@ -124,12 +122,13 @@ class Lights:
         return self.state
 
     def eval_state(self):
-        voltage_diff = self.node_voltages['anode'] - self.node_voltages['cathode']
-        self.state = voltage_diff >= self.voltage_threshold
+        if self.state:
+            self.turn_on()
+        else:
+            self.turn_off()
 
-    def set_voltage(self, node_name, volt):
-        if node_name in self.node_voltages:
-            self.node_voltages[node_name] = volt
+    def set_voltage(self, volt):
+        self.volt = volt
         self.eval_state()
 
     def get_node_positions(self):
