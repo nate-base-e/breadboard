@@ -1,6 +1,7 @@
 import pygame
 
 class Switch:
+    GRID_SIZE = 20.5
     def __init__(self, x, y, on_image_path, off_image_path, name="Switch", initial_state=False):
         self.name = name
         self.state = initial_state
@@ -118,15 +119,17 @@ class Switch:
         elif event.type == pygame.MOUSEMOTION:
             if self.mouse_down_pos:
                 mouse_x, mouse_y = event.pos
+                new_x = round(mouse_x / self.GRID_SIZE) * self.GRID_SIZE + self.offset_x
+                new_y = round(mouse_y / self.GRID_SIZE) * self.GRID_SIZE + self.offset_y
                 initial_x, initial_y = self.mouse_down_pos
                 distance = ((mouse_x - initial_x) ** 2 + (mouse_y - initial_y) ** 2) ** 0.5
                 if distance > self.drag_threshold:
                     self.dragging = True
 
             if self.dragging:
-                mouse_x, mouse_y = event.pos
-                self.rect.x = mouse_x + self.offset_x
-                self.rect.y = mouse_y + self.offset_y
+                #mouse_x, mouse_y = event.pos
+                self.rect.x = new_x
+                self.rect.y = new_y
                 self.x = self.rect.x
                 self.y = self.rect.y
                 return "dragging"
