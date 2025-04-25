@@ -26,6 +26,9 @@ class Battery:
     def getVoltage(self):
         return self.voltage
 
+    def hasVoltage(self):
+        return self.voltage > 0
+
     def setVoltage(self, voltage):
         self.voltage = voltage
         self.text = f"{round(voltage, 1)}V"
