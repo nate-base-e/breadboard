@@ -4,29 +4,33 @@ import pygame as pg
 class Gates:
     def __init__(self, gateType, gateID, x, y, image):
         self.gate_id = gateID
-        self.gate_type = gateType.upper() #AND OR NOT
-        #display properties
+        self.gate_type = gateType.upper()  # AND, OR, NOT
+
+        # Display properties
         self.x = x
         self.y = y
         self.image = image
-        gate_width = int(self.image.get_width() // 3)
-        gate_height = self.image.get_height()
+        self.scale_factor = 0.5  # 50% smaller
+
+        full_width = self.image.get_width()
+        full_height = self.image.get_height()
+        gate_width = int((full_width // 3) * self.scale_factor)
+        gate_height = int(full_height * self.scale_factor)
         self.rect = pg.Rect(x, y, gate_width, gate_height)
         self.dragging = False
 
-        #dragging
+        # Dragging offsets
         self.offset_x = 0
         self.offset_y = 0
 
-        #logic processing
-        self.inputs = []  #list of input values (0 or 1)
-        self.output_val = None #cached output after eval
+        # Logic processing
+        self.inputs = []  # list of input values (0 or 1)
+        self.output_val = None  # cached output after eval
 
-        #determine which part of the picture is being shown (which gate)
-        #0 = AND 1 = OR 2 = NOT
+        # Determine which part of the sprite sheet to use
         self.sprite_index = {"AND": 0, "OR": 1, "NOT": 2}.get(self.gate_type, 0)
 
-        #node variables
+        # Node variables
         self.circle_radius = 4
         self.circle_color = (0, 255, 0)  # green nodes
 
@@ -34,24 +38,21 @@ class Gates:
 
     def update_nodes(self):
         self.input_nodes = []
-
-        inset = -50  # pixels from the edge
+        inset = 0  # nodes right at the edges
 
         if self.gate_type == "NOT":
             self.input_nodes.append((self.rect.left - inset, self.rect.centery))
         else:
-            self.input_nodes.append((self.rect.left - inset, self.rect.top + 10))
-            self.input_nodes.append((self.rect.left - inset, self.rect.bottom - 10))
+            self.input_nodes.append((self.rect.left - inset, self.rect.top + self.rect.height * 0.25))
+            self.input_nodes.append((self.rect.left - inset, self.rect.bottom - self.rect.height * 0.25))
 
         self.output_node = (self.rect.right + inset, self.rect.centery)
 
     def set_inputs(self, *inputs):
-        #set input vals for this gate
         self.inputs = inputs
 
-    #evaluate logic gate and output based on it's type
     def eval(self):
-        if self.gate_type =="AND":
+        if self.gate_type == "AND":
             return int(all(self.inputs))
         elif self.gate_type == "OR":
             return int(any(self.inputs))
@@ -62,37 +63,41 @@ class Gates:
         else:
             raise ValueError(f"Unknown gate type: {self.gate_type}")
 
-
     def output(self):
         self.output_val = self.eval()
         return self.output_val
 
     def draw(self, surface):
-        #draw the correct part of the sprite sheet onto the screen
+        # Draw the gate sprite first
         full_width = self.image.get_width()
-        gate_width = full_width // 3
-        gate_height = self.image.get_height()
-        # crop 2px from left and right to remove border lines (aesthetic)
+        full_height = self.image.get_height()
+        original_gate_width = full_width // 3
+
         crop_left = 2
         crop_right = 2
-        cropped_width = gate_width - (crop_left + crop_right)
+        src_x = self.sprite_index * original_gate_width + crop_left
+        src_rect = pg.Rect(src_x, 0, original_gate_width - crop_left - crop_right, full_height)
 
-        src_x = self.sprite_index * gate_width + crop_left
-        src_rect = pg.Rect(src_x, 0, cropped_width, gate_height)
+        # Crop and scale the gate image
+        gate_image = pg.Surface((src_rect.width, src_rect.height), pg.SRCALPHA)
+        gate_image.blit(self.image, (0, 0), area=src_rect)
+        scaled_width = int((original_gate_width - crop_left - crop_right) * self.scale_factor)
+        scaled_height = int(full_height * self.scale_factor)
+        gate_image = pg.transform.smoothscale(gate_image, (scaled_width, scaled_height))
 
-        # adjust drawing size to match cropped width
-        draw_rect = pg.Rect(self.rect.x, self.rect.y, cropped_width, gate_height)
-        surface.blit(self.image, draw_rect, area=src_rect) # blit that section at current position
+        surface.blit(gate_image, self.rect)
 
-        # drawing nodes
+        # Draw the nodes on top
+        mouse_pos = pg.mouse.get_pos()
+
         for pos in self.input_nodes:
-            pg.draw.circle(surface, self.circle_color, pos, self.circle_radius)
+            color = (255, 0, 0) if (pg.Vector2(mouse_pos) - pg.Vector2(pos)).length() <= self.circle_radius else self.circle_color
+            pg.draw.circle(surface, color, pos, self.circle_radius)
 
-        # Draw output node
-        pg.draw.circle(surface, self.circle_color, self.output_node, self.circle_radius)
+        color = (255, 0, 0) if (pg.Vector2(mouse_pos) - pg.Vector2(self.output_node)).length() <= self.circle_radius else self.circle_color
+        pg.draw.circle(surface, color, self.output_node, self.circle_radius)
 
     def handle_event(self, event):
-        #handle mouse events for dragging the gate
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.dragging = True
@@ -104,14 +109,12 @@ class Gates:
             self.dragging = False
 
         elif event.type == pg.MOUSEMOTION and self.dragging:
-            #while dragging, update position based on mouse movement
             mouse_x, mouse_y = event.pos
             self.rect.x = mouse_x + self.offset_x
             self.rect.y = mouse_y + self.offset_y
 
         self.update_nodes()
 
-    #checks if nodes are clicked for seamless wire use
     def get_clicked_node(self, mouse_pos):
         for i, pos in enumerate(self.input_nodes):
             if (pg.Vector2(mouse_pos) - pg.Vector2(pos)).length() <= self.circle_radius:
