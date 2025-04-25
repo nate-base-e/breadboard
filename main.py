@@ -74,6 +74,9 @@ def main():
     batteries = []  # Allows for multiple batteries
     batteries.append(Battery(x=30, y=0, width=100, height=40, screen=screen))
 
+    lights = []
+    lights.append(Lights(100,100,off_img,on_img))
+
     #List for active switches
     switches = []
 
@@ -82,15 +85,15 @@ def main():
     new_switch = None
 
     resistor = Resistor(x=300, y=300)
-    led = Lights(100,100,off_img,on_img)
     fuse = Fuse(500, 300)  # adjust position as needed
     wavegen = WaveGen("images/WaveGen.jpg", (600, 100))
     hI = 0
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = [led, and_gate, or_gate, not_gate, resistor, fuse, WaveGen, switches]
+    components = [ and_gate, or_gate, not_gate, resistor, fuse, WaveGen, switches]
     components.extend(batteries)  # Adds all batteries to components
+    components.extend(lights)
 
     while running:
         screen.fill((30, 30, 30))
@@ -122,7 +125,6 @@ def main():
             if event.type == pg.QUIT:
                 running = False
 
-            led.handle_event(event)
             resistor.handle_event(event)
             fuse.handle_event(event)
             wavegen.handle_event(event)
@@ -174,6 +176,9 @@ def main():
                 if battery.properties.visible:
                     battery.properties.handle_event(event)
 
+            for light in lights:
+                light.handle_event(event)
+
             # Kory -- Wire Functionality
             # This code block is the engine for detecting mouse events to start creating a wire. --------------
             if not is_any_component_dragging(components):
@@ -220,7 +225,9 @@ def main():
             if battery.properties.visible:
                 battery.properties.draw()
 
-        led.draw(screen)
+        for light in lights:
+            light.draw(screen)
+
         resistor.draw(screen)
         fuse.draw(screen)
         wavegen.draw(screen)

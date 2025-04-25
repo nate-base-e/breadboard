@@ -8,11 +8,11 @@ class Lights:
         self.y = round(y / self.GRID_SIZE) * self.GRID_SIZE
         self.on_image = on_image
         self.off_image = off_image
-        self.rect = off_image.get_rect(center=(self.x + self.GRID_SIZE // 2,self.y + self.GRID_SIZE // 2))
+        self.rect = off_image.get_rect(center=(self.x + self.GRID_SIZE // 2,(self.y + self.GRID_SIZE // 2) - self.GRID_SIZE))
         self.voltage = 0
         self.voltageThreshold = 2
 
-        self.terminals = {
+        self.nodes = {
             "anode": (
                 self.rect.centerx + (self.rect.width // 4),  # Right terminal
                 self.rect.bottom - (self.GRID_SIZE // 2) - self.GRID_SIZE # Just above bottom edge
@@ -23,14 +23,14 @@ class Lights:
             )
         }
 
-        self.terminals = {
+        self.nodes = {
             "anode": (
-                round(self.terminals["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                round(self.terminals["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
             ),
             "cathode": (
-                round(self.terminals["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                round(self.terminals["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
             )
         }
 
@@ -55,7 +55,7 @@ class Lights:
                 self.offset_x = self.rect.x - (round(mouse_x / self.GRID_SIZE) * self.GRID_SIZE)
                 self.offset_y = self.rect.y - (round(mouse_y / self.GRID_SIZE) * self.GRID_SIZE)
 
-            return True  # Indicate this LED was clicked
+            return True
 
         elif event.type == pg.MOUSEBUTTONUP:
             self.dragging = False
@@ -70,7 +70,7 @@ class Lights:
             self.y = new_y
             self.rect.topleft = (new_x, new_y)
 
-            self.terminals = {
+            self.nodes = {
                 "anode": (
                     new_x + self.rect.width // 2 + (self.rect.width // 4),
                     new_y + self.rect.height - (self.GRID_SIZE // 2) - self.GRID_SIZE
@@ -81,14 +81,14 @@ class Lights:
                 )
             }
 
-            self.terminals = {
+            self.nodes = {
                 "anode": (
-                    round(self.terminals["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                    round(self.terminals["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                    round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                    round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
                 ),
                 "cathode": (
-                    round(self.terminals["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                    round(self.terminals["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                    round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                    round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
                 )
             }
 
