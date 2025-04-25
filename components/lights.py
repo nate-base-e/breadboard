@@ -21,43 +21,17 @@ class Lights:
         self.state = False
 
         self.nodes = {
-            "anode": (
-                self.rect.centerx + (self.rect.width // 4),  # Right terminal
-                self.rect.bottom # Just above bottom edge
-            ),
-            "cathode": (
-                self.rect.centerx - (self.rect.width // 4),  # Left terminal
-                self.rect.bottom # Just above bottom edge
-            )
+            "anode": (self.rect.right - 25, self.rect.bottom - 16),   # Right side
+            "cathode": (self.rect.left + 25, self.rect.bottom - 16)
         }
-
-        self.nodes = {
-            "anode": (
-                round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
-            ),
-            "cathode": (
-                round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
-            )
-        }
-
-        self.node_voltages = {
-            'anode': 0,
-            'cathode': 0
-        }
-
     def draw(self, surface):
         if self.state:
             surface.blit(self.on_image, self.rect)
         else:
             surface.blit(self.off_image, self.rect)
 
-        for term_name, (dx, dy) in self.nodes.items():
-            x = self.rect.x + dx
-            y = self.rect.y + dy
-            color = (0, 255, 0) if "input" in term_name else (255, 0, 0)  # Green=input, Red=output
-            pg.draw.circle(surface, color, (x, y), 5)
+        for pos in self.nodes.values():
+            pg.draw.circle(surface, (255, 215, 0), pos, 5)
 
 
     def handle_event(self, event):
@@ -84,25 +58,8 @@ class Lights:
             self.rect.topleft = (new_x, new_y)
 
             self.nodes = {
-                "anode": (
-                    new_x + self.rect.width // 2 + (self.rect.width // 4),
-                    new_y + self.rect.height - (self.GRID_SIZE // 2) - self.GRID_SIZE
-                ),
-                "cathode": (
-                    new_x + self.rect.width // 2 - (self.rect.width // 4),
-                    new_y + self.rect.height - (self.GRID_SIZE // 2) - self.GRID_SIZE
-                )
-            }
-
-            self.nodes = {
-                "anode": (
-                    round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                    round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
-                ),
-                "cathode": (
-                    round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
-                    round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
-                )
+                "anode": (new_x + 70 - 25, new_y + 112 - 16),
+                "cathode": (new_x + 25, new_y + 112 - 16)
             }
 
         return False
