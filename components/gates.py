@@ -38,15 +38,16 @@ class Gates:
 
     def update_nodes(self):
         self.input_nodes = []
-        inset = 0  # nodes right at the edges
+
+        node_offset = 8  # distance from gate edge outward
 
         if self.gate_type == "NOT":
-            self.input_nodes.append((self.rect.left - inset, self.rect.centery))
+            self.input_nodes.append((self.rect.left - node_offset, self.rect.centery))
         else:
-            self.input_nodes.append((self.rect.left - inset, self.rect.top + self.rect.height * 0.25))
-            self.input_nodes.append((self.rect.left - inset, self.rect.bottom - self.rect.height * 0.25))
+            self.input_nodes.append((self.rect.left - node_offset, self.rect.top + self.rect.height * 0.25))
+            self.input_nodes.append((self.rect.left - node_offset, self.rect.bottom - self.rect.height * 0.25))
 
-        self.output_node = (self.rect.right + inset, self.rect.centery)
+        self.output_node = (self.rect.right + node_offset, self.rect.centery)
 
     def set_inputs(self, *inputs):
         self.inputs = inputs
@@ -99,11 +100,13 @@ class Gates:
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.dragging = True
-                mouse_x, mouse_y = event.pos
-                self.offset_x = self.rect.x - mouse_x
-                self.offset_y = self.rect.y - mouse_y
+            # Don't start dragging if user clicked a node!
+            if self.get_clicked_node(event.pos) is None:
+                if self.rect.collidepoint(event.pos):
+                    self.dragging = True
+                    mouse_x, mouse_y = event.pos
+                    self.offset_x = self.rect.x - mouse_x
+                    self.offset_y = self.rect.y - mouse_y
 
         elif event.type == pg.MOUSEBUTTONUP:
             self.dragging = False
@@ -114,19 +117,26 @@ class Gates:
             self.rect.y = mouse_y + self.offset_y
 
         self.update_nodes()
-
+    #fixes recognization of node being clicked
+    def get_clicked_node(self, mouse_pos):
+        for i, pos in enumerate(self.input_nodes):
+            if (pg.Vector2(mouse_pos) - pg.Vector2(pos)).length() <= self.circle_radius:
+                return ("input", i, pos)  # include pos!
+        if (pg.Vector2(mouse_pos) - pg.Vector2(self.output_node)).length() <= self.circle_radius:
+            return ("output", 0, self.output_node)
+        return None
+    #allows usage with wires.
     def get_node_positions(self):
-        points = {}
+        positions = {}
 
         if self.gate_type == "NOT":
-            points["left"] = self.input_nodes[0]  # single input
+            positions["in"] = self.input_nodes[0]
         else:
-            # Assuming 2-input gate: assign both inputs
-            points["left_top"] = self.input_nodes[0]
-            points["left_bottom"] = self.input_nodes[1]
+            positions["in1"] = self.input_nodes[0]
+            positions["in2"] = self.input_nodes[1]
 
-        points["right"] = self.output_node  # output always on the right
-        return points
+        positions["out"] = self.output_node
+        return positions
 
     def stop_dragging(self):
         self.dragging = False
