@@ -16,19 +16,18 @@ class Lights:
         self.offset_x = 0
         self.offset_y = 0
 
+        self.volt = False
 
         self.state = False
-
-        self.voltage_threshold = 2
 
         self.nodes = {
             "anode": (
                 self.rect.centerx + (self.rect.width // 4),  # Right terminal
-                self.rect.bottom - (self.GRID_SIZE // 2) - self.GRID_SIZE # Just above bottom edge
+                self.rect.bottom # Just above bottom edge
             ),
             "cathode": (
                 self.rect.centerx - (self.rect.width // 4),  # Left terminal
-                self.rect.bottom - (self.GRID_SIZE // 2) - self.GRID_SIZE # Just above bottom edge
+                self.rect.bottom # Just above bottom edge
             )
         }
 
@@ -53,6 +52,12 @@ class Lights:
             surface.blit(self.on_image, self.rect)
         else:
             surface.blit(self.off_image, self.rect)
+
+        for term_name, (dx, dy) in self.nodes.items():
+            x = self.rect.x + dx
+            y = self.rect.y + dy
+            color = (0, 255, 0) if "input" in term_name else (255, 0, 0)  # Green=input, Red=output
+            pg.draw.circle(surface, color, (x, y), 5)
 
 
     def handle_event(self, event):
@@ -118,12 +123,13 @@ class Lights:
         return self.state
 
     def eval_state(self):
-        voltage_diff = self.node_voltages['anode'] - self.node_voltages['cathode']
-        self.state = voltage_diff >= self.voltage_threshold
+        if self.volt == True:
+            self.turn_on()
+        else:
+            self.turn_off()
 
-    def set_voltage(self, node_name, volt):
-        if node_name in self.node_voltages:
-            self.node_voltages[node_name] = volt
+    def set_voltage(self, volt):
+        self.volt = volt
         self.eval_state()
 
     def get_node_positions(self):
