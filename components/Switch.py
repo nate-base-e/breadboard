@@ -23,7 +23,7 @@ class Switch:
         self.mouse_down_pos = None
         self.drag_threshold = 5
 
-        self.circle_radius = 2
+        self.circle_radius = 4
         self.circle_color = (0, 255, 0)
 
     def toggle(self):
