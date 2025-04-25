@@ -89,9 +89,8 @@ def main():
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = [led,and_gate,or_gate,not_gate,resistor,fuse, WaveGen]
+    components = [led, and_gate, or_gate, not_gate, resistor, fuse, WaveGen, switches]
     components.extend(batteries)  # Adds all batteries to components
-    components = [Battery,led,and_gate,or_gate,not_gate,resistor,fuse, switches]
 
     while running:
         screen.fill((30, 30, 30))

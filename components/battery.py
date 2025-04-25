@@ -45,13 +45,13 @@ class Battery:
         screen.blit(image, (self.x, self.y))
         screen.blit(text_surface, (text_x, text_y))
 
-        # Draw left circle (negative terminal)
+        # Draw left node
         left_circle_x = self.x - self.circle_radius - 8
         left_circle_y = self.y + self.height // 2
         pygame.draw.circle(screen, self.circle_color,
                            (left_circle_x, left_circle_y), self.circle_radius)
 
-        # Draw right circle (positive terminal)
+        # Draw right node
         right_circle_x = self.x + self.width + self.circle_radius + 8
         right_circle_y = self.y + self.height // 2
         pygame.draw.circle(screen, self.circle_color,
@@ -60,18 +60,18 @@ class Battery:
     def handle_event(self, event):
         mouse_pos = pygame.mouse.get_pos()
 
-        # Calculate circle positions
-        left_circle_x = self.x - self.circle_radius
+        # Calculate node positions
+        left_circle_x = self.x - self.circle_radius - 8
         left_circle_y = self.y + self.height // 2
-        right_circle_x = self.x + self.width + self.circle_radius
+        right_circle_x = self.x + self.width + self.circle_radius + 8
         right_circle_y = self.y + self.height // 2
 
-        # Check if mouse is over left circle
+        # Check if mouse is over left node
         left_dist = ((mouse_pos[0] - left_circle_x) ** 2 +
                      (mouse_pos[1] - left_circle_y) ** 2)
         left_clicked = left_dist <= self.circle_radius ** 2
 
-        # Check if mouse is over right circle
+        # Check if mouse is over right node
         right_dist = ((mouse_pos[0] - right_circle_x) ** 2 +
                       (mouse_pos[1] - right_circle_y) ** 2)
         right_clicked = right_dist <= self.circle_radius ** 2
@@ -79,9 +79,9 @@ class Battery:
         # Check for click events
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left click
-                if left_clicked:  # Click left circle/connector
+                if left_clicked:  # Click left node
                     return True
-                elif right_clicked:  # Click right circle/connector
+                elif right_clicked:  # Click right node
                     return True
                 elif (self.x < mouse_pos[0] < self.x + self.width and
                       self.y < mouse_pos[1] < self.y + self.height):  # Click battery body
@@ -92,7 +92,6 @@ class Battery:
                     return True
             elif event.button == 3:  # Right click
                 if self.x < mouse_pos[0] < self.x + self.width and self.y < mouse_pos[1] < self.y + self.height:
-                    #self.properties.move(self.x + 50, self.y + 50)
                     self.properties.visible = not self.properties.visible
 
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -109,8 +108,8 @@ class Battery:
     # This code is for the wire to call and get the nodes of this component, do not remove (unless you want to break something in which case go ahead).
     def get_node_positions(self):
         return {
-            "left": (self.x - self.circle_radius, self.y + self.height // 2),
-            "right": (self.x + self.width + self.circle_radius, self.y + self.height // 2)
+            "left": (self.x - self.circle_radius - 8, self.y + self.height // 2),
+            "right": (self.x + self.width + self.circle_radius + 8, self.y + self.height // 2)
         }
 
 
