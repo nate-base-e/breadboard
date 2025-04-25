@@ -9,8 +9,13 @@ class Lights:
         self.on_image = on_image
         self.off_image = off_image
         self.rect = off_image.get_rect(center=(self.x + self.GRID_SIZE // 2,(self.y + self.GRID_SIZE // 2) - self.GRID_SIZE))
-        self.voltage = 0
-        self.voltageThreshold = 2
+        self.dragging = False
+        self.offset_x = 0
+        self.offset_y = 0
+
+        self.state = False
+
+        self.voltage_threshold = 2
 
         self.nodes = {
             "anode": (
@@ -34,11 +39,10 @@ class Lights:
             )
         }
 
-        self.state = False
-
-        self.dragging = False
-        self.offset_x = 0
-        self.offset_y = 0
+        self.node_voltages = {
+            'anode': 0,
+            'cathode': 0
+        }
 
     def draw(self, surface):
         if self.state:
@@ -110,16 +114,12 @@ class Lights:
         return self.state
 
     def eval_state(self):
-        if self.voltage > self.voltageThreshold:
-            self.state = True
-        else:
-            self.state = False
+        voltage_diff = self.node_voltages['anode'] - self.node_voltages['cathode']
+        self.state = voltage_diff >= self.voltage_threshold
 
-    def return_volt(self):
-        return self.voltage
-
-    def set_voltage(self,volt):
-        self.voltage = volt
+    def set_voltage(self, node_name, volt):
+        if node_name in self.node_voltages:
+            self.node_voltages[node_name] = volt
         self.eval_state()
 
 
