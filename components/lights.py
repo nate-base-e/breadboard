@@ -1,4 +1,7 @@
 import pygame as pg
+import pygame.transform
+
+
 class Lights:
     GRID_SIZE = 20
 
@@ -6,12 +9,13 @@ class Lights:
 
         self.x = round(x / self.GRID_SIZE) * self.GRID_SIZE
         self.y = round(y / self.GRID_SIZE) * self.GRID_SIZE
-        self.on_image = on_image
-        self.off_image = off_image
-        self.rect = off_image.get_rect(center=(self.x + self.GRID_SIZE // 2,(self.y + self.GRID_SIZE // 2) - self.GRID_SIZE))
+        self.on_image = pygame.transform.scale(on_image,(70,112))
+        self.off_image = pygame.transform.scale(off_image,(70,112))
+        self.rect = self.off_image.get_rect(center=(self.x + self.GRID_SIZE // 2,(self.y + self.GRID_SIZE)))
         self.dragging = False
         self.offset_x = 0
         self.offset_y = 0
+
 
         self.state = False
 
@@ -121,6 +125,9 @@ class Lights:
         if node_name in self.node_voltages:
             self.node_voltages[node_name] = volt
         self.eval_state()
+
+    def get_node_positions(self):
+        return self.nodes
 
 
 
