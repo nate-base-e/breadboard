@@ -53,10 +53,29 @@ def main():
     gate_width = gate_sprite.get_width() // 3
     gap = 20
 
-    and_gate = Gates("AND", "G1", 220, 100, gate_sprite)
-    or_gate = Gates("OR", "G2", 220 + gate_width + gap, 100, gate_sprite)
-    not_gate = Gates("NOT", "G3", 220 + (gate_width + gap) * 2, 100, gate_sprite)
-    gates = [and_gate, or_gate, not_gate]
+    # Gates assets
+    gate_sprite = pg.image.load("images/and or not gates f.png").convert_alpha()
+
+    # Empty list for gates
+    gates = []
+
+    # Settings for layout
+    start_x = 100
+    start_y =450  # move gates  lower down
+    spacing_x = 120  # how much horizontal spacing between gates
+    spacing_y = 120  # how much vertical spacing between rows
+
+    # Add 7 AND gates (row 1)
+    for i in range(7):
+        gates.append(Gates("AND", f"A{i + 1}", start_x + (i * spacing_x), start_y, gate_sprite))
+
+    # 2 OR gates (row 2)
+    for i in range(2):
+        gates.append(Gates("OR", f"O{i + 1}", start_x + (i * spacing_x), start_y + spacing_y, gate_sprite))
+
+    # 2 NOT gates (continue row 2)
+    for i in range(2):
+        gates.append(Gates("NOT", f"N{i + 1}", start_x + ((i + 2) * spacing_x), start_y + spacing_y, gate_sprite))
 
     # lights assets
     on_img = pg.image.load("images/onled.png").convert_alpha()
@@ -91,7 +110,7 @@ def main():
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = [ and_gate, or_gate, not_gate, resistor, fuse, WaveGen, switches]
+    components = gates + [resistor, fuse, wavegen] + switches + batteries + lights
     components.extend(batteries)  # Adds all batteries to components
     components.extend(lights)
 
