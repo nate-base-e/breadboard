@@ -136,6 +136,7 @@ def main():
                     new_switch.dragging = True
                     new_switch.offset_x = 0
                     new_switch.offset_y = 0
+                    new_switch.mouse_down_pos = event.pos
 
             elif event.type == pg.MOUSEMOTION and creating_new_switch and new_switch:
                 #update pos while dragging new switch
@@ -147,15 +148,20 @@ def main():
 
             elif event.type == pg.MOUSEBUTTONUP and event.button == 1 and creating_new_switch and new_switch:
                 #Finish creating the new switch
-                creating_new_switch = False
-                new_switch.dragging = False
+                if creating_new_switch and new_switch:
+                    creating_new_switch = False
+                    new_switch.dragging = False
 
-                #only add switch if placed outside dock
-                if new_switch.rect.y > 75:
-                    switches.append(new_switch)
-                    components.append(new_switch)
+                    if new_switch.rect.y > 75:
+                        switches.append(new_switch)
+                        components.append(new_switch)
 
-                new_switch = None
+                    new_switch = None
+
+                    # Release any existing switches that are being dragged
+                for switch in switches:
+                    if switch.dragging:
+                        switch.dragging = False
 
             #handle existing switches
             for switch in switches[:]:
