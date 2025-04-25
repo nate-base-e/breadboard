@@ -16,22 +16,49 @@ class Lights:
         self.offset_x = 0
         self.offset_y = 0
 
-        self.volt = False
 
         self.state = False
 
+        self.voltage_threshold = 2
+
         self.nodes = {
-            "anode": (self.rect.right - 25, self.rect.bottom - 16),   # Right side
-            "cathode": (self.rect.left + 25, self.rect.bottom - 16)
+            "anode": (
+                self.rect.centerx + (self.rect.width // 4),  # Right terminal
+                self.rect.bottom + 10 # Just above bottom edge
+            ),
+            "cathode": (
+                self.rect.centerx - (self.rect.width // 4),  # Left terminal
+                self.rect.bottom + 10 # Just above bottom edge
+            )
         }
+
+        self.nodes = {
+            "anode": (
+                round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+            ),
+            "cathode": (
+                round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+            )
+        }
+
+        self.node_voltages = {
+            'anode': 0,
+            'cathode': 0
+        }
+
     def draw(self, surface):
         if self.state:
             surface.blit(self.on_image, self.rect)
         else:
             surface.blit(self.off_image, self.rect)
 
+        circle_radius = 4
+        circle_color = (0,255,0)
+
         for pos in self.nodes.values():
-            pg.draw.circle(surface, (255, 215, 0), pos, 5)
+            pg.draw.circle(surface,circle_color,pos,circle_radius)
 
 
     def handle_event(self, event):
@@ -58,8 +85,25 @@ class Lights:
             self.rect.topleft = (new_x, new_y)
 
             self.nodes = {
-                "anode": (new_x + 70 - 25, new_y + 112 - 16),
-                "cathode": (new_x + 25, new_y + 112 - 16)
+                "anode": (
+                    new_x + self.rect.width // 2 + (self.rect.width // 4),
+                    new_y + self.rect.height + 10
+                ),
+                "cathode": (
+                    new_x + self.rect.width // 2 - (self.rect.width // 4),
+                    new_y + self.rect.height + 10
+                )
+            }
+
+            self.nodes = {
+                "anode": (
+                    round(self.nodes["anode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                    round(self.nodes["anode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                ),
+                "cathode": (
+                    round(self.nodes["cathode"][0] / self.GRID_SIZE) * self.GRID_SIZE,
+                    round(self.nodes["cathode"][1] / self.GRID_SIZE) * self.GRID_SIZE
+                )
             }
 
         return False
@@ -80,13 +124,12 @@ class Lights:
         return self.state
 
     def eval_state(self):
-        if self.volt == True:
-            self.turn_on()
-        else:
-            self.turn_off()
+        voltage_diff = self.node_voltages['anode'] - self.node_voltages['cathode']
+        self.state = voltage_diff >= self.voltage_threshold
 
-    def set_voltage(self, volt):
-        self.volt = volt
+    def set_voltage(self, node_name, volt):
+        if node_name in self.node_voltages:
+            self.node_voltages[node_name] = volt
         self.eval_state()
 
     def get_node_positions(self):
