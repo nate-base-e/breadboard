@@ -24,11 +24,11 @@ class Lights:
         self.nodes = {
             "anode": (
                 self.rect.centerx + (self.rect.width // 4),  # Right terminal
-                self.rect.bottom - (self.GRID_SIZE // 2) - self.GRID_SIZE # Just above bottom edge
+                self.rect.bottom + 10 # Just above bottom edge
             ),
             "cathode": (
                 self.rect.centerx - (self.rect.width // 4),  # Left terminal
-                self.rect.bottom - (self.GRID_SIZE // 2) - self.GRID_SIZE # Just above bottom edge
+                self.rect.bottom + 10 # Just above bottom edge
             )
         }
 
@@ -53,6 +53,12 @@ class Lights:
             surface.blit(self.on_image, self.rect)
         else:
             surface.blit(self.off_image, self.rect)
+
+        circle_radius = 4
+        circle_color = (0,255,0)
+
+        for pos in self.nodes.values():
+            pg.draw.circle(surface,circle_color,pos,circle_radius)
 
 
     def handle_event(self, event):
@@ -81,11 +87,11 @@ class Lights:
             self.nodes = {
                 "anode": (
                     new_x + self.rect.width // 2 + (self.rect.width // 4),
-                    new_y + self.rect.height - (self.GRID_SIZE // 2) - self.GRID_SIZE
+                    new_y + self.rect.height + 10
                 ),
                 "cathode": (
                     new_x + self.rect.width // 2 - (self.rect.width // 4),
-                    new_y + self.rect.height - (self.GRID_SIZE // 2) - self.GRID_SIZE
+                    new_y + self.rect.height + 10
                 )
             }
 
