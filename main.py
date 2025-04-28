@@ -33,6 +33,10 @@ def get_clicked_node(components, mouse_pos, radius=10):
 
 wire_start_info = None
 
+from collections import deque
+
+
+
 
 
 def main():
@@ -282,7 +286,6 @@ def main():
             current_pos = round(pg.mouse.get_pos()[0] / GRID_SIZE) * GRID_SIZE, round(
                 pg.mouse.get_pos()[1] / GRID_SIZE) * GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), start_pos, current_pos, 2)
-
 
         pg.display.flip()
         clock.tick(60)
