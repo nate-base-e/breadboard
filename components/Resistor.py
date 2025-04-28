@@ -1,16 +1,16 @@
-#Resistor file
 import pygame as pg
 import os
 
+
 class Resistor:
     def __init__(self, x, y):
-        image_path = os.path.join("images", "Resistor.png") # call the image
+        image_path = os.path.join("images", "Resistor.png")  # call the image
         try:
             self.image = pg.image.load(image_path)
         except Exception as e:
             print(f"Error loading image: {e}")
             self.image = pg.Surface((100, 40))
-            self.image.fill((255, 0, 0))  # fallback red block
+            self.image.fill((255, 20, 20))  # fallback red block
 
         self.image = pg.transform.scale(self.image, (200, 200))  # size of the resistor
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -39,8 +39,8 @@ class Resistor:
         self.rect.y = round(self.rect.y / grid_size) * grid_size
 
     def get_connection_points(self):
-        left = (self.rect.left, self.rect.centery)
-        right = (self.rect.right, self.rect.centery)
+        left = (self.rect.left + 60, self.rect.centery)
+        right = (self.rect.right - 60, self.rect.centery)
         return [left, right]
 
     def draw(self, screen):
@@ -48,10 +48,16 @@ class Resistor:
 
         # Debug: Draw connection points
         for point in self.get_connection_points():
-            pg.draw.circle(screen, (0, 255, 0), point, 2)  # green dots connect to the board
+            pg.draw.circle(screen, (0, 255, 0), point, 5)
 
     def is_dragging(self):
         return self.dragging
+
+    @classmethod
+    def center_top(cls, screen_width=1280, image_width=200, y=20):
+        x = (screen_width - image_width) // 2
+        return cls(x, y)
+
 
 # This code is for the wire to call and get the nodes of this component, do not remove (unless you want to break something in which case go ahead).
     def get_node_positions(self):
