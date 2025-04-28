@@ -1,4 +1,6 @@
 import pygame as pg
+import math
+
 
 class Fuse:
     def __init__(self, x, y):
@@ -64,3 +66,37 @@ class Fuse:
         node_positions = self.get_node_positions()
         for pos in node_positions.values():
             pg.draw.circle(surface, (0, 255, 0), pos, self.node_radius)
+
+
+class Wire:
+    def __init__(self):
+        self.start_pos = None
+        self.end_pos = None
+        self.dragging = False
+
+    def handle_event(self, event, fuse_nodes):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            mouse_pos = pg.mouse.get_pos()
+            for node in fuse_nodes.values():
+                if math.dist(mouse_pos, node) < 15:
+                    self.start_pos = node
+                    self.dragging = True
+                    break
+
+        if event.type == pg.MOUSEBUTTONUP:
+            if self.dragging:
+                mouse_pos = pg.mouse.get_pos()
+                for node in fuse_nodes.values():
+                    if math.dist(mouse_pos, node) < 15:
+                        self.end_pos = node
+                        break
+                self.dragging = False
+
+    def draw(self, surface):
+        if self.start_pos:
+            if self.end_pos:
+                pg.draw.line(surface, (255, 0, 0), self.start_pos, self.end_pos, 3)
+            elif self.dragging:
+                mouse_pos = pg.mouse.get_pos()
+                pg.draw.line(surface, (255, 0, 0), self.start_pos, mouse_pos, 3)
+
