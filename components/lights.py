@@ -131,6 +131,9 @@ class Lights:
         self.volt = volt
         self.eval_state()
 
+    def get_voltage(self):
+        return self.volt
+
     def get_node_positions(self):
         return self.nodes
 
