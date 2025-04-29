@@ -33,6 +33,10 @@ def get_clicked_node(components, mouse_pos, radius=10):
 
 wire_start_info = None
 
+from collections import deque
+
+
+
 
 
 def main():
@@ -110,9 +114,7 @@ def main():
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = gates + [resistor, fuse, wavegen] + switches + batteries + lights
-    components.extend(batteries)  # Adds all batteries to components
-    components.extend(lights)
+    components = gates + [resistor, fuse] + switches + batteries + lights
 
     while running:
         screen.fill((30, 30, 30))
@@ -231,7 +233,7 @@ def main():
                             print("Cannot connect a wire to the same node on both ends.")
                         else:
                             wires.append(Wire(start_pos, pos, start_comp, comp, start_node, node_name))
-                            print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
+                            #print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
                     drawing_wire = False
                     wire_start_info = None
             # --------------------------------------------------------------------------------------------------
@@ -282,7 +284,6 @@ def main():
             current_pos = round(pg.mouse.get_pos()[0] / GRID_SIZE) * GRID_SIZE, round(
                 pg.mouse.get_pos()[1] / GRID_SIZE) * GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), start_pos, current_pos, 2)
-
 
         pg.display.flip()
         clock.tick(60)

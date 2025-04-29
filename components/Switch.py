@@ -27,6 +27,8 @@ class Switch:
         self.circle_radius = 4
         self.circle_color = (0, 255, 0)
 
+        self.voltage = False
+
     def toggle(self):
         self.state = not self.state
         return self.state
@@ -149,6 +151,12 @@ class Switch:
             "top": (self.x + width // 2, self.y - self.circle_radius - 8),
             "bottom": (self.x + width // 2, self.y + height + self.circle_radius + 8)
         }
+
+    def set_voltage(self, voltage):
+        self.voltage = voltage
+
+    def get_voltage(self):
+        return self.voltage
 
     def __repr__(self):
         return f"<{self.name}: {'ON' if self.state else 'OFF'}>"
