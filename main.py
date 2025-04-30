@@ -1,7 +1,6 @@
 import pygame as pg
 from random import random
 from pygame import mixer
-from collections import deque
 
 from components.Switch import Switch
 from components.battery import Battery
@@ -16,34 +15,6 @@ from components.WaveGen import WaveGen
 GRID_SIZE = 20
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-
-# MY CODE TO SIMULATE A CIRCIT ------------------------------------------------------
-def build_circuit_graph(wires):
-    graph = {}
-    for wire in wires:
-        graph.setdefault(wire.start_comp, []).append(wire.end_comp)
-        graph.setdefault(wire.end_comp, []).append(wire.start_comp)
-    return graph
-
-def walk_circuit(graph, start_comp):
-    visited = set()
-    queue = deque()
-    queue.append((start_comp, [start_comp]))  # (current_component, path_so_far)
-
-    while queue:
-        current, path = queue.popleft()
-
-        if isinstance(current, Lights):
-            print(f"✅ Found light at end of path: {path}")
-            continue
-
-        visited.add(current)
-
-        for neighbor in graph.get(current, []):
-            if neighbor not in visited:
-                queue.append((neighbor, path + [neighbor]))
-# MY CODE TO SIMULATE A CIRCIT ------------------------------------------------------
-
 
 
 # This checks if any component that exists is being dragged. All components should return if not being dragged "self.dragging = False"
@@ -61,6 +32,10 @@ def get_clicked_node(components, mouse_pos, radius=10):
     return None, None, None
 
 wire_start_info = None
+
+from collections import deque
+
+
 
 
 
@@ -124,7 +99,6 @@ def main():
 
     lights = []
     lights.append(Lights(100,100,off_img,on_img))
-    lights.append(Lights(100,50,off_img,on_img))
 
     #List for active switches
     switches = []
@@ -140,9 +114,7 @@ def main():
     rollTime = 0
 
     # ALL COMPONENTS NEED TO BE INDEXED WITHIN THIS LIST
-    components = gates + [resistor, fuse, wavegen] + switches + batteries + lights
-    components.extend(batteries)  # Adds all batteries to components
-    components.extend(lights)
+    components = gates + [resistor, fuse] + switches + batteries + lights
 
     while running:
         screen.fill((30, 30, 30))
@@ -261,7 +233,7 @@ def main():
                             print("Cannot connect a wire to the same node on both ends.")
                         else:
                             wires.append(Wire(start_pos, pos, start_comp, comp, start_node, node_name))
-                            print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
+                            #print(f"Wire from {start_node} of {start_comp} to {node_name} of {comp}")
                     drawing_wire = False
                     wire_start_info = None
             # --------------------------------------------------------------------------------------------------
@@ -312,14 +284,6 @@ def main():
             current_pos = round(pg.mouse.get_pos()[0] / GRID_SIZE) * GRID_SIZE, round(
                 pg.mouse.get_pos()[1] / GRID_SIZE) * GRID_SIZE
             pg.draw.line(screen, (200, 200, 200), start_pos, current_pos, 2)
-
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_c:  # Press 'C' key
-                circuit_graph = build_circuit_graph(wires)
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_v:
-                walk_circuit(circuit_graph, battery)
-
 
         pg.display.flip()
         clock.tick(60)
