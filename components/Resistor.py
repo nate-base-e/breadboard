@@ -4,19 +4,31 @@ import os
 
 class Resistor:
     def __init__(self, x, y):
-        image_path = os.path.join("images", "Resistor.png")  # call the image
+        image_path = os.path.join("images", "Resistor.png")
         try:
             self.image = pg.image.load(image_path)
         except Exception as e:
             print(f"Error loading image: {e}")
             self.image = pg.Surface((100, 40))
-            self.image.fill((255, 20, 20))  # fallback red block
+            self.image.fill((255, 20, 20))
 
-        self.image = pg.transform.scale(self.image, (200, 200))  # size of the resistor
+        self.image = pg.transform.scale(self.image, (200, 200))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.dragging = False
         self.offset_x = 0
         self.offset_y = 0
+
+        # === Add these lines ===
+        self.resistance = 100  # ohms
+        self.voltage_drop = 0
+        self.current = 0
+
+    def update_voltage(self, voltage):
+        self.voltage_drop = voltage
+        if self.resistance != 0:
+            self.current = voltage / self.resistance
+        else:
+            self.current = 0
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
