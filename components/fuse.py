@@ -149,7 +149,7 @@ class ComponentTester:
         tester.add_test(Wire((100, 100), (200, 200), None, None, "start", "end"), "Wire")
         tester.add_test(lights[0], "Light")
 
-#################### testtt##############################
+#################### testtt###############################
 #testtt for now only the battery work
         tester.run_current_test()
 
