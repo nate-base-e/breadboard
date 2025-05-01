@@ -36,6 +36,8 @@ class Gates:
 
         self.update_nodes()
 
+        self.voltage = False
+
     def update_nodes(self):
         self.input_nodes = []
 
@@ -140,3 +142,12 @@ class Gates:
 
     def stop_dragging(self):
         self.dragging = False
+
+    def get_gate_type(self):
+        return self.gate_type
+
+    def set_voltage(self, voltage):
+        self.voltage = voltage
+
+    def get_voltage(self):
+        return self.voltage
