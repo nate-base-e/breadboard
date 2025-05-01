@@ -100,6 +100,20 @@ class Wire:
         dist_sq = (px - closest_x) ** 2 + (py - closest_y) ** 2
         return dist_sq <= threshold ** 2
 
+    # added by omar for testing
+    # this is for passing power from battery to resistor using the wire
+    # used for Omar_Final.py test file
+    def transfer_power(self):
+        if hasattr(self.start_comp, 'getVoltage') and hasattr(self.end_comp, 'update_voltage'):
+            voltage = self.start_comp.getVoltage()
+            self.voltage = voltage
+            self.end_comp.update_voltage(voltage)
+        elif hasattr(self.end_comp, 'getVoltage') and hasattr(self.start_comp, 'update_voltage'):
+            voltage = self.end_comp.getVoltage()
+            self.voltage = voltage
+            self.start_comp.update_voltage(voltage)
+
+
 
     #this code dosent quite work without some uniform input and output for each compoenent but this code could work
 
