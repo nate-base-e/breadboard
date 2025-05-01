@@ -5,6 +5,49 @@ pygame.init()
 
 GRID_SIZE = 20
 
+# Kasey - Circuit function. Lots of bugs but most of the logic is there.
+'''
+def check_circuit(components, wires):
+    inputs = ["cathode", "bottom", "in", "in1", "in2"]
+    outputs = ["anode", "top", "out", "right"]
+    and_sum = 0
+
+    for comp in components:  # Get all components
+        for node, pos in comp.get_node_positions().items():  # Get all nodes
+            for wire in wires:  # Get all wires
+                if wire.get_other_end(comp, node):  # Is the component connected to something?
+                    connected_comp = wire.get_other_end(comp, node)[0]
+                    connected_node = wire.get_other_end(comp, node)[1]
+                    if node in outputs and connected_node in inputs:  # An output is connected to an input
+                        if isinstance(connected_comp, Gates):  # Is the input a gate?
+                            if connected_comp.get_gate_type() == "NOT":  # Is the input a NOT gate?
+                                if isinstance(comp, Battery):  # Is the output a battery?
+                                    connected_comp.set_voltage(not comp.has_voltage())  # Yes: Use has_voltage
+                                else:
+                                    connected_comp.set_voltage(not comp.get_voltage())
+
+                            elif connected_comp.get_gate_type() == "AND":  # Is the input an AND gate?
+                                if connected_node == "in1" and comp.get_voltage():
+                                    and_sum += 1
+                                if connected_node == "in2" and comp.get_voltage():
+                                    and_sum += 1
+                                if and_sum == 2:  # Both inputs have voltage coming in
+                                    connected_comp.set_voltage(True)
+                                else:
+                                    connected_comp.set_voltage(False)
+
+                            else:  # OR gate
+                                if comp.get_voltage():
+                                    connected_comp.set_voltage(True)
+
+                        else:  # Input is not a gate
+                            if isinstance(comp, Switch):  # Is the output a switch?
+                                if comp.get_voltage() and comp.is_on():
+                                    connected_comp.set_voltage(True)
+                            else:
+                                if comp.get_voltage():
+                                    connected_comp.set_voltage(True)
+'''
 class Battery:
     def __init__(self, x, y, width, height, screen):
         self.voltage = 1.5
@@ -23,13 +66,13 @@ class Battery:
 
         self.properties = BatteryProperties(self, screen)
 
-    def getVoltage(self):
+    def get_voltage(self):
         return self.voltage
 
-    def hasVoltage(self):
+    def has_voltage(self):
         return self.voltage > 0
 
-    def setVoltage(self, voltage):
+    def set_voltage(self, voltage):
         self.voltage = voltage
         self.text = f"{round(voltage, 1)}V"
 
@@ -120,7 +163,7 @@ class Battery:
 class BatteryProperties:
     def __init__(self, battery, screen, x=450, y=320):
         self.battery = battery
-        self.current_voltage = battery.getVoltage()
+        self.current_voltage = battery.get_voltage()
         self.prev_valid_voltage = self.current_voltage
         self.screen = screen
         self.x = x
@@ -219,7 +262,7 @@ class BatteryProperties:
         self.current_voltage = ((mouse_x - self.slider_rect.left) / self.slider_rect.width) * 12
         self.current_voltage = round(self.current_voltage, 2)
         self.input_text = str(self.current_voltage)
-        self.battery.setVoltage(self.current_voltage)
+        self.battery.set_voltage(self.current_voltage)
         self.prev_valid_voltage = self.current_voltage
         self.update_slider_handle()
 
@@ -229,17 +272,17 @@ class BatteryProperties:
             if 0 <= new_voltage <= 12:
                 self.current_voltage = new_voltage
                 self.prev_valid_voltage = new_voltage
-                self.battery.setVoltage(new_voltage)
+                self.battery.set_voltage(new_voltage)
                 self.update_slider_handle()
             elif new_voltage < 0:
                 self.current_voltage = 0
                 self.prev_valid_voltage = 0
-                self.battery.setVoltage(0)
+                self.battery.set_voltage(0)
                 self.update_slider_handle()
             elif new_voltage > 12:
                 self.current_voltage = 12
                 self.prev_valid_voltage = 12
-                self.battery.setVoltage(12)
+                self.battery.set_voltage(12)
                 self.update_slider_handle()
         except ValueError:
             pass

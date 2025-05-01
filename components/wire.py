@@ -101,7 +101,42 @@ class Wire:
         return dist_sq <= threshold ** 2
 
 
-    #need a function to call the breadboard at the location of the wire start
-    #the breadboard node should contain information of what component node is on it
-    #get the component from breadboard and associate with start/end variables
-    #check the nodes agianst themsevles. if the node is the same as the one that is calling the other end, filter out that node.
+    #this code dosent quite work without some uniform input and output for each compoenent but this code could work
+
+    #these two funcitons go inside of main but not in the main game loop
+    # def build_circuit_graph(wires):
+    #     graph = {}
+    #     for wire in wires:
+    #         graph.setdefault(wire.start_comp, []).append(wire.end_comp)
+    #         graph.setdefault(wire.end_comp, []).append(wire.start_comp)
+    #     return graph
+    #
+    # def propagate_signal(graph, start_comp, value, visited=None):
+    #     if visited is None:
+    #         visited = set()
+    #
+    #     visited.add(start_comp)
+    #
+    #     for neighbor in graph.get(start_comp, []):
+    #         if neighbor in visited:
+    #             continue
+    #
+    #         if hasattr(neighbor, "add_input"):
+    #             neighbor.add_input(value)
+    #         elif hasattr(neighbor, "set_input"):
+    #             neighbor.set_input(value)
+    #
+    #         output = value
+    #         if hasattr(neighbor, "get_output"):
+    #             output = neighbor.get_output()
+    #
+    #         propagate_signal(graph, neighbor, output, visited)
+    #
+    #
+    #     #this code goes in the main game loop
+    #     if event.type == pg.KEYDOWN:
+    #         if event.key == pg.K_c:  # Press 'C' key
+    #             circuit_graph = build_circuit_graph(wires)
+    #     if event.type == pg.KEYDOWN:
+    #         if event.key == pg.K_v:
+    #             walk_circuit(circuit_graph, battery)
