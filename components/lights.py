@@ -189,7 +189,7 @@ class Lights:
         return self.state
 
     def eval_state(self):
-        if self.state:
+        if self.volt > 0:   #omar change it for testing and making lights work on testing
             self.turn_on()
         else:
             self.turn_off()
