@@ -103,17 +103,26 @@ class Wire:
     # added by omar for testing
     # this is for passing power from battery to resistor using the wire
     # used for Omar_Final.py test file
+    # Omar update for wire-based power simulation
     def transfer_power(self):
-        if hasattr(self.start_comp, 'getVoltage') and hasattr(self.end_comp, 'update_voltage'):
-            voltage = self.start_comp.getVoltage()
-            self.voltage = voltage
+        # Battery to Resistor
+        if hasattr(self.start_comp, 'get_voltage') and hasattr(self.end_comp, 'update_voltage'):
+            voltage = self.start_comp.get_voltage()
             self.end_comp.update_voltage(voltage)
-        elif hasattr(self.end_comp, 'getVoltage') and hasattr(self.start_comp, 'update_voltage'):
-            voltage = self.end_comp.getVoltage()
-            self.voltage = voltage
+
+        # Resistor to Light
+        elif hasattr(self.start_comp, 'get_voltage') and hasattr(self.end_comp, 'set_voltage'):
+            voltage = self.start_comp.get_voltage()
+            self.end_comp.set_voltage(voltage)
+
+        # Reverse connections
+        elif hasattr(self.end_comp, 'get_voltage') and hasattr(self.start_comp, 'update_voltage'):
+            voltage = self.end_comp.get_voltage()
             self.start_comp.update_voltage(voltage)
 
-
+        elif hasattr(self.end_comp, 'get_voltage') and hasattr(self.start_comp, 'set_voltage'):
+            voltage = self.end_comp.get_voltage()
+            self.start_comp.set_voltage(voltage)
 
     #this code dosent quite work without some uniform input and output for each compoenent but this code could work
 
