@@ -1,7 +1,74 @@
 import pygame as pg
 import pygame.transform
 
+'''
+def circut():
 
+    # creating the graph that will hold what is connected to what
+
+    graph = {}
+    for wire in wires:
+        start = (wire.start_comp, wire.start_terminal)
+        end = (wire.end_comp, wire.end_terminal)
+        
+        if start not in graph:
+            graph[start] = []
+        graph[start].append(end)
+        
+        if end not in graph:
+            graph[end] = []
+        graph[end].append(start)
+        
+    # create a queue
+    queue = []
+    
+    # look through the components for the batteries
+    # we look for the battery first to start the queue
+    
+    for comp in components:
+        if isinstance(comp, Battery):
+            for node_name in comp.output_node():
+                key = (comp, node_name)
+                queue.append(key)
+                
+                
+    # start going through the queue to share information between components
+    while queue:
+    
+        # temporary variable to store the first component and remove it from the queue
+        temp = queue.pop(0)
+        
+        # split the variable in the component and the node
+        temp_comp, temp_outnode = temp
+        
+        # this is a check to see if the node is a output not if it is not skip this node
+        if current_term not in current_comp.output_nodes():
+            continue
+        
+        # assume the component will have a get output function to retrieve the output of a node
+        voltage = temp_comp.get_output(temp_outnode)
+        
+        # check the nodes connected to this node and put it in a array
+        for neighbor in graph.get(temp, []):
+            
+            # split the node in to its component and node
+            neighbor_comp, neighbor_node = neighbor
+            
+            # skip this node if the node is not a input node
+            if neighbor_node not in neighbor_comp.input_nodes():
+                continue
+            
+            # adjust the connected nodes input state to be the voltage given from the output node from the last component
+            # this assumes the component will have a function to adjusts the nodes voltage
+            # we also now assume from this the component will run a function when we set the input to update the output 
+            # based on whatever logic is for the given component
+            neighbor_comp.set_input(neighbor_term, voltage)
+            
+            # make a new key for the output node of the neighbor node and add it to the queue to continue checking through all connects connected
+            for node_name in neighbor_comp.output_node():
+                output_key = (neighbor_comp, node_name)
+                queue.append(output_key)
+'''
 class Lights:
     GRID_SIZE = 20
 
@@ -136,6 +203,8 @@ class Lights:
 
     def get_node_positions(self):
         return self.nodes
+
+
 
 
 
