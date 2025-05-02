@@ -78,3 +78,5 @@ class Resistor:
             "left": (points[0]),
             "right": (points[1])
         }
+    def get_voltage(self):
+        return self.voltage_drop
