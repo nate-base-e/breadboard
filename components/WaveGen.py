@@ -1,4 +1,7 @@
 import pygame
+pygame.init()
+
+
 
 class WaveGen:
     def __init__(self, image_path, position=(0, 0)):
@@ -97,18 +100,18 @@ class TesterComponent:
 
 
 # Instantiate the tester with the screen
-tester = TesterComponent(screen)
+#tester = TesterComponent(screen)
 
 # Register test cases
-tester.add_test("Battery", batteries[0])
-tester.add_test("Wire", Wire((100, 100), (200, 200), None, None, "start", "end"))
-tester.add_test("Light", lights[0])
+#tester.add_test("Battery", batteries[0])
+#tester.add_test("Wire", Wire((100, 100), (200, 200), None, None, "start", "end"))
+#tester.add_test("Light", lights[0])
 
 ##########test section #############
 # Only the battery works for now
-tester.execute_current_test()
+#tester.execute_current_test()
 
 # Check for key press to advance
 # keys = pg.key.get_pressed()
-if keys[pg.K_SPACE]:  # SPACE advances to next test
-    tester.advance_test()
+#if keys[pg.K_SPACE]:  # SPACE advances to next test
+#    tester.advance_test()
