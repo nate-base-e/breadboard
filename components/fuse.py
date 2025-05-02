@@ -144,7 +144,7 @@ class ComponentTester:
 
         tester = ComponentTester(screen)
 
-         Add tests here
+#         Add tests here
         tester.add_test(batteries[0], "Battery")
         tester.add_test(Wire((100, 100), (200, 200), None, None, "start", "end"), "Wire")
         tester.add_test(lights[0], "Light")
