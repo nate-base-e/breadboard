@@ -50,3 +50,65 @@ class WaveGen:
     def get_voltage(self):
         # Return the voltage output of the component
         return self.voltage
+
+
+
+
+
+
+################## updated test function ##########################
+class TesterComponent:
+    def __init__(self, display):
+        self.display = display
+        self.test_cases = {}  # Changed from list of tuples to dictionary
+        self.test_names = []
+        self.test_index = 0
+        self.completed = False
+
+    def add_test(self, test_label, component):
+        self.test_cases[test_label] = component
+        self.test_names.append(test_label)
+
+    def execute_current_test(self):
+        if self.completed or not self.test_names:
+            return
+
+        current_label = self.test_names[self.test_index]
+        current_component = self.test_cases[current_label]
+
+        self.display.fill((50, 50, 50))  # Fill background
+
+        if hasattr(current_component, 'draw'):
+            current_component.draw(self.display)
+
+        # Display the test name
+        font = pg.font.Font(None, 36)
+        test_text = font.render(f"Running Test: {current_label}", True, (255, 255, 255))
+        self.display.blit(test_text, (20, 20))
+
+    def advance_test(self):
+        self.test_index += 1
+        if self.test_index >= len(self.test_names):
+            self.completed = True
+
+    def restart_tests(self):
+        self.test_index = 0
+        self.completed = False
+
+
+# Instantiate the tester with the screen
+tester = TesterComponent(screen)
+
+# Register test cases
+tester.add_test("Battery", batteries[0])
+tester.add_test("Wire", Wire((100, 100), (200, 200), None, None, "start", "end"))
+tester.add_test("Light", lights[0])
+
+##########test section #############
+# Only the battery works for now
+tester.execute_current_test()
+
+# Check for key press to advance
+# keys = pg.key.get_pressed()
+if keys[pg.K_SPACE]:  # SPACE advances to next test
+    tester.advance_test()
